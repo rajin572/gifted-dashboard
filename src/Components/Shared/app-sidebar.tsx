@@ -33,7 +33,7 @@ export function AppSidebar() {
           <NavGroup key={props.title} {...props} />
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-t-2 border-[#FFFFFF1A]">
+      <SidebarFooter className="border-t border-border">
         <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />

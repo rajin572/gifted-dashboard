@@ -6,6 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../select";
+import { cn } from "@/lib/utils";
 
 export interface FilterOption {
     value: string;
@@ -20,6 +21,7 @@ interface ReuseFilterSelectProps {
     label?: string;
     className?: string;
     triggerClassName?: string;
+    contentClassName?: string;
     disabled?: boolean;
     allowClear?: boolean;
     onClear?: () => void;
@@ -33,6 +35,7 @@ const ReuseFilterSelect: React.FC<ReuseFilterSelectProps> = ({
     label,
     className = "",
     triggerClassName = "",
+    contentClassName = "",
     disabled = false,
     allowClear = false,
     onClear,
@@ -46,9 +49,9 @@ const ReuseFilterSelect: React.FC<ReuseFilterSelectProps> = ({
     };
 
     return (
-        <div className={`flex flex-col gap-2 ${className}`}>
+        <div className={cn("flex flex-col gap-1.5", className)}>
             {label && (
-                <label className="text-sm font-medium text-primary-color!">{label}</label>
+                <label className="text-xs font-medium text-[#6B6D75]">{label}</label>
             )}
             <Select
                 value={value}
@@ -56,21 +59,24 @@ const ReuseFilterSelect: React.FC<ReuseFilterSelectProps> = ({
                 disabled={disabled}
             >
                 <SelectTrigger
-                    className={`border-secondary-color! bg-secondary-color! text-primary-color! outline-none! shadow-none! ring-0! text-base min-w-37.5  ${triggerClassName}`}
+                    className={cn(
+                        "h-10 px-3.5 text-xs bg-[#F4F4F6] text-[#1A1A1E] border-0 rounded-xl outline-none shadow-none ring-0 min-w-[140px] focus-visible:ring-0 focus-visible:border-0 hover:bg-[#EBEBEF] cursor-pointer",
+                        triggerClassName
+                    )}
                 >
-                    <SelectValue className="text-primary-color!" placeholder={placeholder} />
+                    <SelectValue className="placeholder:text-base-color/50!" placeholder={placeholder} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={cn("rounded-xl border-[#E4E4E7] shadow-lg", contentClassName)}>
                     {allowClear && value && (
                         <>
-                            <SelectItem value="__clear__" className="text-primary-color! italic">
+                            <SelectItem value="__clear__" className="text-xs italic text-muted-foreground">
                                 Clear selection
                             </SelectItem>
-                            <div className="border-t my-1 text-primary-color!" />
+                            <div className="border-t my-1" />
                         </>
                     )}
                     {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={option.value} className="text-xs">
                             {option.label}
                         </SelectItem>
                     ))}

@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 interface ReuseSearchInputProps {
     placeholder?: string;
     setSearch: (value: string) => void;
-    setPage: (page: number) => void;
+    setPage?: (page: number) => void;
     debounceDelay?: number;
     className?: string;
+    inputClassName?: string;
     showIcon?: boolean;
 }
 
@@ -18,9 +19,10 @@ const ReuseSearchInput: React.FC<ReuseSearchInputProps> = ({
     setPage,
     debounceDelay = 500,
     className = "",
+    inputClassName = "",
     showIcon = true,
 }) => {
-    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceTimerRef = useRef<any | null>(null);
 
     const debouncedSearch = useCallback(
         (value: string) => {
@@ -35,7 +37,7 @@ const ReuseSearchInput: React.FC<ReuseSearchInputProps> = ({
     );
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        setPage(1);
+        setPage?.(1);
         debouncedSearch(e.target.value);
     };
 
@@ -48,7 +50,7 @@ const ReuseSearchInput: React.FC<ReuseSearchInputProps> = ({
                 type="text"
                 placeholder={placeholder}
                 onChange={handleSearch}
-                className={`${showIcon ? 'pl-10 py-5' : ''} border-[#E5E5E5] bg-[#F5F5F5] outline-none! shadow-none! ring-0! text-base`}
+                className={cn(`${showIcon ? 'pl-10' : 'px-4'} py-5 border-[#E5E5E5] bg-[#F5F5F5] placeholder:text-base-color/50! outline-none! shadow-none! ring-0! text-base`, inputClassName)}
             />
         </div>
     );

@@ -36,9 +36,10 @@ type FormControlProps<
   TTransformedValues = TFieldValues
 > = {
   name: TName;
-  label: ReactNode;
+  label?: ReactNode;
   description?: ReactNode;
   control: ControllerProps<TFieldValues, TName, TTransformedValues>["control"];
+  className?: string;
 };
 
 type FormBaseProps<
@@ -80,18 +81,20 @@ export function FormBase<
   description,
   controlFirst,
   horizontal,
+  className,
 }: FormBaseProps<TFieldValues, TName, TTransformedValues>) {
   return (
     <Controller
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const labelElement = (
+        const hasLabel = Boolean(label);
+        const labelElement = (hasLabel || description) ? (
           <>
-            <FieldLabel className=" text-sm font-medium" htmlFor={field.name}>{label}</FieldLabel>
+            {hasLabel && <FieldLabel className=" text-sm font-medium" htmlFor={field.name}>{label}</FieldLabel>}
             {description && <FieldDescription>{description}</FieldDescription>}
           </>
-        );
+        ) : null;
         const control = children({
           ...field,
           id: field.name,
@@ -105,18 +108,17 @@ export function FormBase<
           <Field
             data-invalid={fieldState.invalid}
             orientation={horizontal ? "horizontal" : undefined}
+            className={className}
           >
             {controlFirst ? (
               <>
                 {control}
-                <FieldContent>
-                  {labelElement}
-                  {errorElem}
-                </FieldContent>
+                {labelElement && <FieldContent>{labelElement}</FieldContent>}
+                {errorElem}
               </>
             ) : (
               <>
-                <FieldContent>{labelElement}</FieldContent>
+                {labelElement && <FieldContent>{labelElement}</FieldContent>}
                 {control}
                 {errorElem}
               </>
@@ -149,7 +151,7 @@ export const FormInput: FormControlFunc<{
           )}
           <Input
             className={cn(
-              "border-[#E5E5E5]! bg-[#F5F5F5]! outline-none! shadow-none! ring-0! text-base! py-5!",
+              "border-[#E5E5E5]! bg-[#F5F5F5]! placeholder:text-base-color/50! outline-none! shadow-none! ring-0! text-base! py-5!",
               prefix && "pl-10",
               suffix && "pr-10",
               inputClassName
@@ -170,8 +172,15 @@ export const FormInput: FormControlFunc<{
   );
 };
 
-export const FormTextarea: FormControlFunc<{ prefix?: ReactNode; suffix?: ReactNode; inputClassName?: string }> = (props) => {
-  const { prefix, suffix, inputClassName, ...restProps } = props;
+export const FormTextarea: FormControlFunc<{
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+  inputClassName?: string;
+  placeholder?: string;
+  rows?: number;
+  disabled?: boolean;
+}> = (props) => {
+  const { prefix, suffix, inputClassName, placeholder, rows, disabled, ...restProps } = props;
 
   return (
     <FormBase {...restProps}>
@@ -184,11 +193,14 @@ export const FormTextarea: FormControlFunc<{ prefix?: ReactNode; suffix?: ReactN
           )}
           <Textarea
             className={cn(
-              "placeholder:text-base-color/50! bg-primary-color! border! border-base-color/30! focus:border-base-color/70! outline-none! shadow! ring-0! text-base! py-2! min-h-20",
+              "placeholder:text-base-color/50! bg-primary-color!  border! border-base-color/30! focus:border-base-color/70! outline-none! shadow! ring-0! text-base! py-2! min-h-20",
               prefix && "pl-10",
               suffix && "pr-10",
               inputClassName
             )}
+            placeholder={placeholder}
+            rows={rows}
+            disabled={disabled}
             {...field}
           />
           {suffix && (
@@ -252,7 +264,9 @@ export const FormSelect: FormControlFunc<{
   placeholder?: string;
   prefix?: ReactNode;
   suffix?: ReactNode;
-}> = ({ children, placeholder = "Select an option", prefix, suffix, ...props }) => {
+  triggerClassName?: string;
+  disabled?: boolean;
+}> = ({ children, placeholder = "Select an option", prefix, suffix, triggerClassName, disabled, ...props }) => {
   return (
     <FormBase {...props}>
       {({ onChange, onBlur, ...field }) => (
@@ -262,12 +276,13 @@ export const FormSelect: FormControlFunc<{
               {prefix}
             </div>
           )}
-          <Select {...field} onValueChange={onChange}>
+          <Select {...field} onValueChange={onChange} disabled={disabled}>
             <SelectTrigger
               className={cn(
-                "w-full bg-primary-color! border! border-base-color/30! focus:border-base-color/70! outline-none! shadow! ring-0! text-base! py-5!",
+                "w-full bg-primary-color! border! border-base-color/30! placeholder:text-base-color/50! focus:border-base-color/70! outline-none! shadow! ring-0! text-base! py-5!",
                 prefix && "pl-10",
-                suffix && "pr-10"
+                suffix && "pr-10",
+                triggerClassName
               )}
               aria-invalid={field["aria-invalid"]}
               id={field.id}
@@ -333,7 +348,7 @@ export const FormCheckbox: FormControlFunc = (props) => {
     <FormBase {...props} horizontal controlFirst>
       {({ onChange, value, ...field }) => (
         <Checkbox
-          className="border-secondary-color bg-base-color/5"
+          className="border-secondary-color placeholder:text-base-color/50! bg-base-color/5"
           {...field}
           checked={value}
           onCheckedChange={onChange}
@@ -446,6 +461,9 @@ export const FormDatePicker: FormControlFunc<{
   formatString?: string;
   startMonth?: Date;
   endMonth?: Date;
+  triggerClassName?: string;
+  showText?: boolean;
+  showIcon?: boolean;
 }> = ({
   placeholder = "Pick a date",
   disablePast = false,
@@ -453,6 +471,9 @@ export const FormDatePicker: FormControlFunc<{
   formatString = "PPP",
   startMonth,
   endMonth,
+  triggerClassName,
+  showText = true,
+  showIcon = true,
   ...props
 }) => {
     const today = new Date();
@@ -484,14 +505,17 @@ export const FormDatePicker: FormControlFunc<{
                 type="button"
                 aria-invalid={ariaInvalid}
                 className={cn(
-                  "w-full h-9 flex items-center gap-2 px-3 py-2 text-base rounded-md border border-base-color/30 bg-primary-color shadow text-left",
+                  "w-full placeholder:text-base-color/50! h-9 flex items-center gap-2 px-3 py-2 text-base rounded-md border border-base-color/30 bg-primary-color shadow text-left",
                   "focus:outline-none focus:border-base-color/70",
                   "aria-invalid:border-destructive",
-                  !value && "text-base-color/50"
+                  !value && "text-base-color/50",
+                  triggerClassName
                 )}
               >
-                <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
-                {value ? format(value as Date, formatString) : placeholder}
+                {showIcon && (
+                  <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
+                )}
+                {showText && (value ? format(value as Date, formatString) : <span className="placeholder:text-base-color/50!">{placeholder}</span>)}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -511,3 +535,42 @@ export const FormDatePicker: FormControlFunc<{
       </FormBase>
     );
   };
+
+import { ReuseTimePicker } from "./ReuseTimePicker";
+
+export const FormTimePicker: FormControlFunc<{
+  placeholder?: string;
+  formatString?: string;
+  timeFormat?: "12-hour" | "24-hour";
+  disablePast?: boolean;
+  disable?: boolean;
+  triggerClassName?: string;
+}> = ({
+  placeholder = "Select a time",
+  formatString = "hh:mm aa",
+  timeFormat = "12-hour",
+  disablePast = false,
+  disable = false,
+  triggerClassName,
+  ...props
+}) => {
+    return (
+      <FormBase {...props}>
+        {({ onChange, value }) => (
+          <ReuseTimePicker
+            value={value as Date | undefined}
+            onChange={onChange}
+            placeholder={placeholder}
+            formatString={formatString}
+            timeFormat={timeFormat}
+            disablePast={disablePast}
+            disable={disable}
+            triggerClassName={triggerClassName}
+          />
+        )}
+      </FormBase>
+    );
+  };
+
+export { default as ReuseableForm } from "./ReuseableForm";
+export { SelectItem } from "../../select";

@@ -12,3 +12,6 @@ export * from "./adminTeam.type";
 export * from "./legalDocuments.type";
 export * from "./dashboard.type";
 export * from "./settings.type";
+export * from "./telemetry.type";
+export * from "./userMonitoring.type";
+export * from "./listingsMonitoring.type";

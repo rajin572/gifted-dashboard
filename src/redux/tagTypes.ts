@@ -12,6 +12,9 @@ export const tagTypes = {
   adminTeam: "AdminTeam",
   legalDocuments: "LegalDocuments",
   settings: "Settings",
+  telemetry: "Telemetry",
+  userMonitoring: "UserMonitoring",
+  listingsMonitoring: "ListingsMonitoring",
 };
 
 export const tagTypesList = [
@@ -28,4 +31,7 @@ export const tagTypesList = [
   tagTypes.adminTeam,
   tagTypes.legalDocuments,
   tagTypes.settings,
+  tagTypes.telemetry,
+  tagTypes.userMonitoring,
+  tagTypes.listingsMonitoring,
 ];

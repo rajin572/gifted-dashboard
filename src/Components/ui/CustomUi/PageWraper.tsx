@@ -1,29 +1,36 @@
 import { cn } from '@/lib/utils';
+import Container from './Container';
 
 
 interface PageWraperProps {
     className?: string;
-    title: string;
-    description?: string;
+    preTitle?: React.ReactNode;
+    title: React.ReactNode;
+    description?: React.ReactNode;
     actions?: React.ReactNode;
     children: React.ReactNode;
 }
 
-const PageWraper: React.FC<PageWraperProps> = ({ className, title, description, actions, children }) => {
+const PageWraper: React.FC<PageWraperProps> = ({ className, preTitle, title, description, actions, children }) => {
     return (
-        <section className={cn("space-y-5 min-h-screen p-10", className)}>
-            <div className="flex items-start justify-between gap-4">
+        <Container className={cn("space-y-5 min-h-screen py-6 sm:py-10", className)}>
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 sm:mb-8">
                 <div>
-                    <h1 className='text-2xl lg:text-3xl font-bold text-foreground'>{title}</h1>
+                    {preTitle && (
+                        <div className="text-sm font-medium mb-1 text-secondbase-color">
+                            {preTitle}
+                        </div>
+                    )}
+                    <h1 className='text-2xl lg:text-[28px] font-semibold text-base-color leading-[1.2]'>{title}</h1>
                     {
                         description &&
-                        <p className='text-xs lg:text-sm text-[#6A7282] mt-1'>{description}</p>
+                        <p className='mt-1 text-sm text-secondbase-color'>{description}</p>
                     }
                 </div>
-                {actions && <div className="shrink-0">{actions}</div>}
+                {actions && <div className="shrink-0 flex items-center gap-2 flex-wrap">{actions}</div>}
             </div>
             {children}
-        </section>
+        </Container>
     );
 };
 

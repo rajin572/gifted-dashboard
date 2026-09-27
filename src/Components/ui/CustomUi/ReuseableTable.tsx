@@ -41,6 +41,9 @@ interface ReusableTableProps<T> {
     total?: number;
     onRowClick?: (row: T) => void;
     scroll?: boolean;
+    hideHeader?: boolean;
+    rowClassName?: (row: T) => string;
+    headerClassName?: string;
 }
 
 const ReusableTable = <T,>({
@@ -54,7 +57,10 @@ const ReusableTable = <T,>({
     limit = 10,
     total = 0,
     onRowClick,
-    scroll = true
+    scroll = true,
+    hideHeader = false,
+    rowClassName,
+    headerClassName
 }: ReusableTableProps<T>) => {
     // Helper function to format width
     const formatWidth = (width: string | number | undefined) => {
@@ -65,33 +71,35 @@ const ReusableTable = <T,>({
     return (
         <div className={cn(pagination && 'pb-5')}>
             <div className={cn(
-                'overflow-x-auto',
+                'overflow-x-auto scrollbar-none',
                 scroll ? 'lg:overflow-x-auto' : 'lg:overflow-x-visible'
             )}>
-                <Table className={cn(' rounded-2xl! w-full', { 'min-w-max': scroll })}>
+                <Table className={cn(' rounded-2xl! w-full', scroll ? 'min-w-max' : 'min-w-[640px] md:min-w-full')}>
                     {caption && <TableCaption>{caption}</TableCaption>}
 
-                    <TableHeader className='rounded-2xl! bg-[#F5F5F5]'>
-                        <TableRow>
-                            {columns.map((column, index) => (
-                                <TableHead
-                                    key={index}
-                                    className={cn("text-xl font-bold px-5 py-4", column.headerClassName)}
-                                    style={{
-                                        width: formatWidth(column.width),
-                                        minWidth: formatWidth(column.width) || (scroll ? '150px' : "auto"),
-                                        maxWidth: formatWidth(column.width),
-                                        position: column.fixed ? 'sticky' : 'static',
-                                        left: column.fixed ? 0 : 'auto',
-                                        backgroundColor: column.fixed ? '#F5F5F5' : undefined,
-                                        zIndex: column.fixed ? 10 : undefined,
-                                    }}
-                                >
-                                    {column.header}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    </TableHeader>
+                    {!hideHeader && (
+                        <TableHeader className={cn('rounded-2xl! bg-[#F5F5F5]', headerClassName)}>
+                            <TableRow>
+                                {columns.map((column, index) => (
+                                    <TableHead
+                                        key={index}
+                                        className={cn("text-xl font-bold px-3 py-3 sm:px-5 sm:py-4", column.headerClassName)}
+                                        style={{
+                                            width: formatWidth(column.width),
+                                            minWidth: formatWidth(column.width) || (scroll ? '150px' : "auto"),
+                                            maxWidth: formatWidth(column.width),
+                                            position: column.fixed ? 'sticky' : 'static',
+                                            left: column.fixed ? 0 : 'auto',
+                                            backgroundColor: column.fixed ? '#F5F5F5' : undefined,
+                                            zIndex: column.fixed ? 10 : undefined,
+                                        }}
+                                    >
+                                        {column.header}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        </TableHeader>
+                    )}
 
                     <TableBody>
                         {data.length === 0 ? (
@@ -108,13 +116,16 @@ const ReusableTable = <T,>({
                                 <TableRow
                                     key={rowIndex}
                                     onClick={() => onRowClick?.(row)}
-                                    className={onRowClick ? 'cursor-pointer' : ''}
+                                    className={cn(
+                                        onRowClick ? 'cursor-pointer' : '',
+                                        rowClassName ? rowClassName(row) : ''
+                                    )}
                                 >
                                     {columns.map((column, colIndex) => (
                                         <TableCell
                                             key={colIndex}
                                             className={cn(
-                                                "px-5 py-4 text-base",
+                                                "px-3 py-3 sm:px-5 sm:py-4 text-base",
                                                 "max-w-125 md:max-w-none",
                                                 column.cellClassName,
                                                 {
@@ -125,7 +136,7 @@ const ReusableTable = <T,>({
                                             style={{
                                                 width: formatWidth(column.width),
                                                 minWidth: scroll ? formatWidth(column.width) : undefined,
-                                                maxWidth: window.innerWidth >= 768 && !scroll ? formatWidth(column.width) : undefined,
+                                                maxWidth: !scroll ? formatWidth(column.width) : undefined,
                                                 position: column.fixed ? 'sticky' : 'static',
                                                 left: column.fixed ? 0 : 'auto',
                                                 backgroundColor: column.fixed ? 'white' : undefined,
@@ -161,7 +172,7 @@ const ReusableTable = <T,>({
                 </Table>
             </div>
 
-            <div className='w-full mt-16 ml-auto'>
+            <div className='w-full mt-8 sm:mt-16 ml-auto'>
                 {
                     pagination && <ReusablePagination
                         currentPage={currentPage}

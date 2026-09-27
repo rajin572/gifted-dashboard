@@ -13,8 +13,8 @@ interface ReusableSheetProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     trigger?: React.ReactNode;
-    title: string;
-    description?: string;
+    title: React.ReactNode;
+    description?: React.ReactNode;
     children: React.ReactNode;
     footer?: React.ReactNode;
     side?: "right" | "left" | "top" | "bottom";

@@ -1,318 +1,430 @@
 import { useState } from "react";
-import { Ban, CheckCircle2, Download, Eye, Mail, MoreVertical, UserX, XCircle } from "lucide-react";
+import { CheckCircle2, MapPin, History, ShieldAlert } from "lucide-react";
 import PageWraper from "@/Components/ui/CustomUi/PageWraper";
 import ReuseSearchInput from "@/Components/ui/CustomUi/ReuseForm/ReuseSearchInput";
 import ReuseFilterSelect, { FilterOption } from "@/Components/ui/CustomUi/ReuseForm/ReuseFilterSelect";
 import ReusableTable, { Column } from "@/Components/ui/CustomUi/ReuseableTable";
-import Tag from "@/Components/ui/CustomUi/ReuseTag";
 import ConfirmModal from "@/Components/ui/CustomUi/Modal/ConfirmModal";
 import { Button } from "@/Components/ui/button";
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import UserStatCards from "@/Components/Dashboard/UserManagement/UserStatCards";
-import UserDetailModal from "@/Components/Dashboard/UserManagement/UserDetailModal";
-import { statusBadgeClass, statusTheme } from "@/Components/Dashboard/UserManagement/userStatusStyles";
-import { IPlatformUser, UserStatus } from "@/types";
-import { getAvatar } from "@/utils/getAvatar";
-// import { useGetUsersQuery, useSuspendUserMutation, useBanUserMutation } from "@/redux/features/user/userApi";
+import UserInspectModal from "@/Components/Dashboard/UserMonitoring/UserInspectModal";
+import IssueWarningModal from "@/Components/Dashboard/UserMonitoring/IssueWarningModal";
+import { IUserMonitoringItem } from "@/types";
+// import {
+//   useGetUserMonitoringListQuery,
+//   useSuspendUserMutation,
+//   useRevokeVerificationMutation,
+// } from "@/redux/features/userMonitoring/userMonitoringApi";
 // import tryCatchWrapper from "@/utils/tryCatchWrapper";
 
-// TODO: replace with real user list API data once the endpoint exists.
-const DUMMY_USERS: IPlatformUser[] = [
-  { _id: "1", userCode: "USR-10001", fullName: "John Smith", email: "john.smith@example.com", phone: "+1 555-0101", country: "United States", status: "active", isVerified: true, totalBookings: 12, totalSpent: 45670, lastActiveLabel: "2 hours ago", joinedAt: "2025-01-15" },
-  { _id: "2", userCode: "USR-10002", fullName: "Sarah Johnson", email: "sarah.j@example.com", phone: "+44 20 1234 5678", country: "United Kingdom", status: "active", isVerified: true, totalBookings: 8, totalSpent: 32100, lastActiveLabel: "5 hours ago", joinedAt: "2025-02-03" },
-  { _id: "3", userCode: "USR-10003", fullName: "Michael Chen", email: "mchen@example.com", phone: "+86 138 0000 0000", country: "China", status: "suspended", isVerified: true, totalBookings: 15, totalSpent: 58200, lastActiveLabel: "1 day ago", joinedAt: "2024-11-20" },
-  { _id: "4", userCode: "USR-10004", fullName: "Emma Davis", email: "emma.davis@example.com", phone: "+61 2 1234 5678", country: "Australia", status: "active", isVerified: false, totalBookings: 2, totalSpent: 8900, lastActiveLabel: "3 days ago", joinedAt: "2025-05-10" },
-  { _id: "5", userCode: "USR-10005", fullName: "David Wilson", email: "dwilson@example.com", phone: "+33 1 23 45 67 89", country: "France", status: "banned", isVerified: true, totalBookings: 7, totalSpent: 21450, lastActiveLabel: "2 weeks ago", joinedAt: "2024-09-02" },
-  { _id: "6", userCode: "USR-10006", fullName: "Maria Garcia", email: "maria.garcia@example.com", phone: "+34 91 123 4567", country: "Spain", status: "active", isVerified: true, totalBookings: 18, totalSpent: 67800, lastActiveLabel: "30 minutes ago", joinedAt: "2024-08-18" },
+// TODO: wire to useGetUserMonitoringListQuery once the endpoint exists.
+const DUMMY_USER_MONITORING_LIST: IUserMonitoringItem[] = [
+  {
+    _id: "usr-849201",
+    name: "Sarah Jenkins",
+    email: "sarah.j@austin.edu",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: true,
+    role: "Community Leader",
+    location: "South Congress",
+    giftsGiven: 48,
+    giftsReceived: 3,
+    verificationStatus: "VERIFIED ID",
+    accountStatus: "ACTIVE",
+    joinedDate: "November 2023",
+    recentActivity: "Vintage Herman Miller Office Chair • Completed • Picked up by David Kim • 2 hours ago",
+    communityBadges: ["Super Giver", "Verified ID", "Community Champion", "Fast Responder"],
+  },
+  {
+    _id: "usr-849202",
+    name: "Marcus Chen",
+    email: "marcus.c@techcorp.io",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: true,
+    role: "Verified Donor",
+    location: "East Austin",
+    giftsGiven: 19,
+    giftsReceived: 1,
+    verificationStatus: "VERIFIED ID",
+    accountStatus: "ACTIVE",
+    joinedDate: "January 2024",
+    recentActivity: "Organic Baby Clothes Bundle (0-6m) • Claimed • 5 hours ago",
+    communityBadges: ["Verified ID", "Fast Responder", "Generous Heart"],
+  },
+  {
+    _id: "usr-849203",
+    name: "Elena Rostova",
+    email: "elena.rostova@gmail.com",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: true,
+    role: "Community Leader",
+    location: "Hyde Park",
+    giftsGiven: 62,
+    giftsReceived: 0,
+    verificationStatus: "VERIFIED ID",
+    accountStatus: "ACTIVE",
+    joinedDate: "September 2023",
+    recentActivity: "Stand Mixer & Baking Accessories • Available • 1 day ago",
+    communityBadges: ["Super Giver", "Verified ID", "Top Donor 2024", "Community Champion"],
+  },
+  {
+    _id: "usr-849204",
+    name: "David Kim",
+    email: "david.kim92@outlook.com",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: false,
+    role: "Member",
+    location: "Downtown",
+    giftsGiven: 2,
+    giftsReceived: 11,
+    verificationStatus: "UNVERIFIED",
+    accountStatus: "UNDER REVIEW",
+    joinedDate: "March 2024",
+    recentActivity: "Sonos One Gen 2 Smart Speaker • Applied for gift • 3 hours ago",
+    communityBadges: ["Active Applicant"],
+  },
+  {
+    _id: "usr-849205",
+    name: "Jessica Taylor",
+    email: "jess.taylor@design.co",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: true,
+    role: "Verified Donor",
+    location: "Mueller",
+    giftsGiven: 31,
+    giftsReceived: 4,
+    verificationStatus: "VERIFIED ID",
+    accountStatus: "ACTIVE",
+    joinedDate: "December 2023",
+    recentActivity: "Cuisinart Espresso Machine • Completed pickup • 2 days ago",
+    communityBadges: ["Verified ID", "Super Giver", "Community Champion"],
+  },
+  {
+    _id: "usr-849206",
+    name: "Chloe Bennett",
+    email: "chloe.b@student.utexas.edu",
+    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+    isVerifiedDonor: false,
+    role: "Member",
+    location: "Zilker",
+    giftsGiven: 0,
+    giftsReceived: 0,
+    verificationStatus: "UNVERIFIED",
+    accountStatus: "ACTIVE",
+    joinedDate: "May 2024",
+    recentActivity: "Joined Austin Zilker Community Node • 1 week ago",
+    communityBadges: ["New Neighbor"],
+  },
+];
+
+const ROLE_OPTIONS: FilterOption[] = [
+  { label: "All Roles", value: "all" },
+  { label: "Community Leader", value: "Community Leader" },
+  { label: "Verified Donor", value: "Verified Donor" },
+  { label: "Member", value: "Member" },
+  { label: "New Applicant", value: "New Applicant" },
 ];
 
 const STATUS_OPTIONS: FilterOption[] = [
-  { label: "All Status", value: "all" },
-  { label: "Active", value: "active" },
-  { label: "Suspended", value: "suspended" },
-  { label: "Banned", value: "banned" },
+  { label: "All Statuses", value: "all" },
+  { label: "Active", value: "ACTIVE" },
+  { label: "Under Review", value: "UNDER REVIEW" },
+  { label: "Suspended", value: "SUSPENDED" },
 ];
 
 const UserManagementPage = () => {
   const [, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
-  const [selectedUser, setSelectedUser] = useState<IPlatformUser | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [isSuspendOpen, setIsSuspendOpen] = useState(false);
-  const [isBanOpen, setIsBanOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<IUserMonitoringItem | null>(null);
+  const [isInspectOpen, setIsInspectOpen] = useState(false);
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [isSuspendConfirmOpen, setIsSuspendConfirmOpen] = useState(false);
+  const [isRevokeConfirmOpen, setIsRevokeConfirmOpen] = useState(false);
 
-  // const { data } = useGetUsersQuery(
+  // const { data, isFetching } = useGetUserMonitoringListQuery(
   //   {
   //     page: currentPage,
   //     limit,
   //     searchParams: search.length > 0 ? search : undefined,
+  //     role: roleFilter === "all" ? undefined : roleFilter,
   //     status: statusFilter === "all" ? undefined : statusFilter,
   //   },
   //   { refetchOnMountOrArgChange: true }
   // );
-  // const users = data?.data?.data ?? [];
-  // const total = data?.data?.meta?.total ?? 0;
-  const users = DUMMY_USERS;
-  const total = DUMMY_USERS.length;
-
-  const handleViewDetails = (user: IPlatformUser) => {
-    setSelectedUser(user);
-    setIsDetailOpen(true);
-  };
-
-  const handleSendEmail = (user: IPlatformUser) => {
-    window.location.href = `mailto:${user.email}`;
-  };
+  // const users = data?.data?.data ?? DUMMY_USER_MONITORING_LIST;
+  // const total = data?.data?.meta?.total ?? DUMMY_USER_MONITORING_LIST.length;
+  const users = DUMMY_USER_MONITORING_LIST;
+  const total = DUMMY_USER_MONITORING_LIST.length;
 
   // const [suspendUser] = useSuspendUserMutation();
-  // const [banUser] = useBanUserMutation();
-
-  const handleSuspend = async (_user: IPlatformUser, _reason?: string) => {
+  const handleConfirmSuspend = async () => {
+    // if (!selectedUser) return;
     // const res = await tryCatchWrapper(
     //   suspendUser,
-    //   { params: { id: _user._id }, body: { reason: _reason } },
-    //   { toastLoadingMessage: "Suspending user..." }
+    //   { params: { id: selectedUser._id }, body: { reason: "Admin suspension" } },
+    //   { toastLoadingMessage: "Suspending account..." }
     // );
     // if (res?.success) {
-    //   setIsSuspendOpen(false);
+    //   setIsSuspendConfirmOpen(false);
+    //   setIsInspectOpen(false);
     // }
-    setIsSuspendOpen(false);
+    setIsSuspendConfirmOpen(false);
+    setIsInspectOpen(false);
   };
 
-  const handleBan = async (_user: IPlatformUser, _reason?: string) => {
+  // const [revokeVerification] = useRevokeVerificationMutation();
+  const handleConfirmRevoke = async () => {
+    // if (!selectedUser) return;
     // const res = await tryCatchWrapper(
-    //   banUser,
-    //   { params: { id: _user._id }, body: { reason: _reason } },
-    //   { toastLoadingMessage: "Banning user..." }
+    //   revokeVerification,
+    //   { params: { id: selectedUser._id } },
+    //   { toastLoadingMessage: "Revoking verification..." }
     // );
     // if (res?.success) {
-    //   setIsBanOpen(false);
+    //   setIsRevokeConfirmOpen(false);
     // }
-    setIsBanOpen(false);
+    setIsRevokeConfirmOpen(false);
   };
 
-  const handleExport = () => {
-    const header = ["User ID", "Name", "Email", "Phone", "Country", "Status", "Verified", "Bookings", "Total Spent", "Last Active"];
-    const rows = users.map((u) => [
-      u.userCode,
-      u.fullName,
-      u.email,
-      u.phone,
-      u.country,
-      u.status,
-      u.isVerified ? "Yes" : "No",
-      u.totalBookings,
-      u.totalSpent,
-      u.lastActiveLabel,
-    ]);
-    const csv = [header, ...rows]
-      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "users.csv";
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const columns: Column<IPlatformUser>[] = [
+  const columns: Column<IUserMonitoringItem>[] = [
     {
-      header: "User",
-      accessorKey: "fullName",
+      header: "MEMBER PROFILE",
+      accessorKey: "name",
       render: (_, row) => (
         <div className="flex items-center gap-3">
-          <Avatar className="size-9">
-            <AvatarFallback className="bg-secondary-color text-white font-semibold text-xs">
-              {getAvatar(row.fullName)}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium text-base-color">{row.fullName}</p>
-            <p className="text-xs text-secondbase-color">{row.userCode}</p>
+          <img
+            src={row.avatar}
+            alt={row.name}
+            className="size-9 rounded-full object-cover border border-border bg-gray-50 shrink-0"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/images/dummyProfile.jpg";
+            }}
+          />
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 font-semibold text-gray-900 text-sm">
+              <span className="truncate">{row.name}</span>
+              {row.isVerifiedDonor && (
+                <CheckCircle2 className="size-4 text-blue-500 fill-blue-50 shrink-0" />
+              )}
+            </div>
+            <p className="text-xs text-gray-500 truncate">{row.email}</p>
           </div>
         </div>
       ),
     },
     {
-      header: "Contact",
-      accessorKey: "email",
+      header: "ROLE & LOCATION",
+      accessorKey: "role",
       render: (_, row) => (
         <div>
-          <p className="text-sm text-base-color">{row.email}</p>
-          <p className="text-xs text-secondbase-color">{row.phone}</p>
+          <span className="text-xs font-semibold text-gray-800">{row.role}</span>
+          <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+            <MapPin className="size-3 text-gray-400 shrink-0" />
+            <span>{row.location}</span>
+          </div>
         </div>
       ),
     },
     {
-      header: "Country",
-      accessorKey: "country",
-      render: (value: string) => <span className="text-sm">{value}</span>,
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      render: (value: UserStatus) => (
-        <Tag theme={statusTheme[value]} className={statusBadgeClass[value]}>
-          {value}
-        </Tag>
+      header: "GIVE / RECEIVE",
+      accessorKey: "giftsGiven",
+      render: (_, row) => (
+        <div className="text-xs">
+          <span className="font-bold text-gray-900">{row.giftsGiven} given</span>
+          <span className="text-gray-400 font-normal"> • {row.giftsReceived} recv</span>
+        </div>
       ),
     },
     {
-      header: "Verified",
-      accessorKey: "isVerified",
-      render: (value: boolean) =>
-        value ? (
-          <CheckCircle2 className="size-4 text-emerald-500" />
-        ) : (
-          <XCircle className="size-4 text-muted-foreground" />
-        ),
+      header: "VERIFICATION",
+      accessorKey: "verificationStatus",
+      render: (_, row) => {
+        const isVerified = row.verificationStatus === "VERIFIED ID";
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${isVerified
+                ? "border-emerald-300 text-emerald-600 bg-emerald-50/70"
+                : "border-gray-200 text-gray-500 bg-gray-50"
+              }`}
+          >
+            {row.verificationStatus}
+          </span>
+        );
+      },
     },
     {
-      header: "Bookings",
-      accessorKey: "totalBookings",
-      render: (value: number) => <span className="text-sm">{value}</span>,
+      header: "ACCOUNT STATUS",
+      accessorKey: "accountStatus",
+      render: (_, row) => {
+        const isReview = row.accountStatus === "UNDER REVIEW";
+        const isSuspended = row.accountStatus === "SUSPENDED";
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${isReview
+                ? "border-amber-300 text-amber-600 bg-amber-50/70"
+                : isSuspended
+                  ? "border-rose-300 text-rose-600 bg-rose-50/70"
+                  : "border-emerald-300 text-emerald-600 bg-emerald-50/70"
+              }`}
+          >
+            {row.accountStatus}
+          </span>
+        );
+      },
     },
     {
-      header: "Total Spent",
-      accessorKey: "totalSpent",
-      render: (value: number) => <span className="text-sm font-medium">${value.toLocaleString()}</span>,
-    },
-    {
-      header: "Last Active",
-      accessorKey: "lastActiveLabel",
-      render: (value: string) => <span className="text-xs text-secondbase-color">{value}</span>,
-    },
-    {
-      header: "Actions",
+      header: "SUPERVISION ACTIONS",
       accessorKey: "_id",
       render: (_, row) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="p-1.5 rounded-md hover:bg-muted transition-colors cursor-pointer"
-            >
-              <MoreVertical className="size-4 text-base-color" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleViewDetails(row)}>
-              <Eye className="size-4" /> View Details
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSendEmail(row)}>
-              <Mail className="size-4" /> Send Email
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedUser(row);
-                setIsSuspendOpen(true);
-              }}
-            >
-              <Ban className="size-4" /> Suspend User
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => {
-                setSelectedUser(row);
-                setIsBanOpen(true);
-              }}
-            >
-              <UserX className="size-4" /> Ban User
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelectedUser(row);
+              setIsInspectOpen(true);
+            }}
+            className="h-7 px-3 text-xs font-medium border-border text-gray-700 bg-white hover:bg-gray-50 rounded-lg shadow-2xs"
+          >
+            Inspect
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedUser(row);
+              setIsInspectOpen(true);
+            }}
+            title="Activity History"
+            className="size-7 p-0 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            <History className="size-3.5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedUser(row);
+              setIsSuspendConfirmOpen(true);
+            }}
+            title="Suspend Member"
+            className="size-7 p-0 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+          >
+            <ShieldAlert className="size-3.5" />
+          </Button>
+        </div>
       ),
     },
   ];
 
   return (
     <PageWraper
-      title="User Management"
-      description="Manage and monitor all platform users"
-      actions={
-        <Button variant="outline" onClick={handleExport}>
-          <Download className="size-4" />
-          Export
-        </Button>
+      title={
+        <div className="flex items-center gap-2.5">
+          <span>Community Member & User Supervision</span>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-border text-gray-500 bg-gray-50">
+            {total} Supervised Members
+          </span>
+        </div>
       }
+      description="Live peer directory, reputation scores, zero-resale compliance monitoring."
     >
-      <UserStatCards />
+      <div className="flex flex-col gap-4">
+        {/* Filters and Search Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-border shadow-2xs">
+          <ReuseSearchInput
+            placeholder="Search members by name, email, or Austin neighborhood..."
+            setSearch={setSearch}
+            setPage={setCurrentPage}
+            className="w-full sm:w-96"
+          />
 
-      <div className="bg-white rounded-xl border border-border shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 p-5 pb-4">
-          <h2 className="text-base font-semibold text-base-color">All Users</h2>
-          <div className="flex flex-wrap items-center gap-3">
-            <ReuseSearchInput
-              className="min-w-72"
-              placeholder="Search by name, email, or ID..."
-              setSearch={setSearch}
-              setPage={setCurrentPage}
+          <div className="flex items-center gap-2.5">
+            <ReuseFilterSelect
+              options={ROLE_OPTIONS}
+              value={roleFilter}
+              onChange={setRoleFilter}
+              placeholder="All Roles"
             />
             <ReuseFilterSelect
               options={STATUS_OPTIONS}
               value={statusFilter}
-              onChange={(value) => {
-                setStatusFilter(value);
-                setCurrentPage(1);
-              }}
-              placeholder="All Status"
+              onChange={setStatusFilter}
+              placeholder="All Statuses"
             />
           </div>
         </div>
 
-        <ReusableTable
-          data={users}
-          columns={columns}
-          pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          limit={limit}
-          total={total}
-        />
+        {/* Supervision Members Table */}
+        <div className="bg-white rounded-xl border border-border shadow-2xs overflow-hidden">
+          <ReusableTable
+            data={users}
+            columns={columns}
+            pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            limit={limit}
+            total={total}
+          />
+        </div>
       </div>
 
-      <UserDetailModal open={isDetailOpen} onClose={() => setIsDetailOpen(false)} user={selectedUser} />
-
-      <ConfirmModal<IPlatformUser>
-        open={isSuspendOpen}
-        onCancel={() => setIsSuspendOpen(false)}
-        currentRecord={selectedUser}
-        onConfirm={handleSuspend}
-        title="Suspend User"
-        description={`Temporarily suspend ${selectedUser?.fullName} from the platform`}
-        confirmText="Suspend User"
-        cancelText="Cancel"
-        variant="warning"
-        withReason
-        reasonLabel="Reason for Suspension"
-        reasonRequired
+      {/* Inspect Dossier Modal */}
+      <UserInspectModal
+        open={isInspectOpen}
+        onClose={() => setIsInspectOpen(false)}
+        user={selectedUser}
+        onOpenIssueWarning={(user) => {
+          setSelectedUser(user);
+          setIsWarningOpen(true);
+        }}
+        onOpenSuspendConfirm={(user) => {
+          setSelectedUser(user);
+          setIsSuspendConfirmOpen(true);
+        }}
+        onRevokeVerification={(user) => {
+          setSelectedUser(user);
+          setIsRevokeConfirmOpen(true);
+        }}
       />
 
-      <ConfirmModal<IPlatformUser>
-        open={isBanOpen}
-        onCancel={() => setIsBanOpen(false)}
+      {/* Issue Warning Modal */}
+      <IssueWarningModal
+        open={isWarningOpen}
+        onClose={() => setIsWarningOpen(false)}
+        user={selectedUser}
+      />
+
+      {/* Suspend Confirmation Modal */}
+      <ConfirmModal<IUserMonitoringItem>
+        open={isSuspendConfirmOpen}
+        onCancel={() => setIsSuspendConfirmOpen(false)}
         currentRecord={selectedUser}
-        onConfirm={handleBan}
-        title="Ban User"
-        description={`Permanently ban ${selectedUser?.fullName} from the platform`}
-        confirmText="Ban User"
+        onConfirm={handleConfirmSuspend}
+        title="Suspend Member Account"
+        description={`Are you sure you want to suspend ${selectedUser?.name ?? "this member"}? They will be unable to list items or post recipient stories.`}
+        confirmText="Suspend Account"
         cancelText="Cancel"
         variant="danger"
-        warningText="This action is permanent and cannot be undone. The user will lose access to all their bookings and listings."
-        withReason
-        reasonLabel="Reason for Ban"
-        reasonRequired
+        iconPreset="delete"
+      />
+
+      {/* Revoke Verification Confirmation Modal */}
+      <ConfirmModal<IUserMonitoringItem>
+        open={isRevokeConfirmOpen}
+        onCancel={() => setIsRevokeConfirmOpen(false)}
+        currentRecord={selectedUser}
+        onConfirm={handleConfirmRevoke}
+        title="Revoke Verified ID Status"
+        description={`Are you sure you want to revoke verified donor identity for ${selectedUser?.name ?? "this member"}?`}
+        confirmText="Revoke Verification"
+        cancelText="Cancel"
+        variant="danger"
       />
     </PageWraper>
   );

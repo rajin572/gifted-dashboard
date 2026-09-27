@@ -65,7 +65,7 @@ const ReusablePagination = ({ currentPage, setCurrentPage, limit, total }: Reusa
 
     return (
         <Pagination>
-            <PaginationContent>
+            <PaginationContent className="flex-wrap justify-center gap-1">
                 <PaginationItem>
                     <PaginationPrevious
                         href="#"

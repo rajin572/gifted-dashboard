@@ -21,8 +21,6 @@ export const routeGenerator = (allitems: any[]): RouteObject[] => {
     } else if (item.items && item.items.length > 0) {
       const childRoutes = routeGenerator(item.items); // Process nested items
       acc.push(...childRoutes); // Add all the child routes to the accumulator
-    } else {
-      console.log("Skipping item due to missing url or element:", item); // Debugging log
     }
 
     return acc;

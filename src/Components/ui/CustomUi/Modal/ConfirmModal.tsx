@@ -74,7 +74,7 @@ interface ConfirmModalProps<T> {
     currentRecord: T | null;
     onConfirm: (record: T, reason?: string) => void;
     title?: string;
-    description?: string;
+    description?: React.ReactNode;
     confirmText?: string;
     cancelText?: string;
     variant?: ConfirmVariant;
@@ -142,7 +142,7 @@ function ConfirmModal<T>({
             title=""
             maxWidth="sm:max-w-sm md:max-w-lg "
             footer={
-                <div className="flex justify-end gap-3 w-full">
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 w-full">
                     <Button
                         variant="outline"
                         onClick={handleCancel}
