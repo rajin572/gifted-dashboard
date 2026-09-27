@@ -15,6 +15,8 @@ export const tagTypes = {
   telemetry: "Telemetry",
   userMonitoring: "UserMonitoring",
   listingsMonitoring: "ListingsMonitoring",
+  storiesClaimsAudit: "StoriesClaimsAudit",
+  liveStreamWatch: "LiveStreamWatch",
 };
 
 export const tagTypesList = [
@@ -34,4 +36,6 @@ export const tagTypesList = [
   tagTypes.telemetry,
   tagTypes.userMonitoring,
   tagTypes.listingsMonitoring,
+  tagTypes.storiesClaimsAudit,
+  tagTypes.liveStreamWatch,
 ];

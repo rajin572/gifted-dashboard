@@ -240,11 +240,11 @@ const ListingsMonitoringPage = () => {
           <div className="flex items-center gap-1 font-semibold text-gray-800 text-xs">
             <span>{row.donorName}</span>
             {row.isDonorVerified && (
-              <CheckCircle2 className="size-3.5 text-blue-500 fill-blue-50 shrink-0" />
+              <CheckCircle2 className="size-4 text-primary-color fill-[#FF5C5C] shrink-0" />
             )}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-            <MapPin className="size-3 text-gray-400 shrink-0" />
+            <MapPin className="size-3 text-[#FF5C5C] shrink-0" />
             <span>{row.location}</span>
           </div>
         </div>
@@ -268,8 +268,8 @@ const ListingsMonitoringPage = () => {
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${isClaimed
-                ? "border-amber-300 text-amber-600 bg-amber-50/70"
-                : "border-emerald-300 text-emerald-600 bg-emerald-50/70"
+              ? "border-amber-300 text-amber-600 bg-amber-50/70"
+              : "border-emerald-300 text-emerald-600 bg-emerald-50/70"
               }`}
           >
             {row.status}
@@ -370,8 +370,8 @@ const ListingsMonitoringPage = () => {
             type="button"
             onClick={() => setActiveTab("all")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${activeTab === "all"
-                ? "bg-[#ff4c05] text-white shadow-2xs"
-                : "bg-white border border-border text-gray-700 hover:bg-gray-50"
+              ? "bg-[#ff4c05] text-white shadow-2xs"
+              : "bg-white border border-border text-gray-700 hover:bg-gray-50"
               }`}
           >
             All ({total})
@@ -380,8 +380,8 @@ const ListingsMonitoringPage = () => {
             type="button"
             onClick={() => setActiveTab("available")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${activeTab === "available"
-                ? "bg-[#ff4c05] text-white shadow-2xs"
-                : "bg-white border border-border text-gray-700 hover:bg-gray-50"
+              ? "bg-[#ff4c05] text-white shadow-2xs"
+              : "bg-white border border-border text-gray-700 hover:bg-gray-50"
               }`}
           >
             Available ({availableCount})
@@ -390,8 +390,8 @@ const ListingsMonitoringPage = () => {
             type="button"
             onClick={() => setActiveTab("claimed")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${activeTab === "claimed"
-                ? "bg-[#ff4c05] text-white shadow-2xs"
-                : "bg-white border border-border text-gray-700 hover:bg-gray-50"
+              ? "bg-[#ff4c05] text-white shadow-2xs"
+              : "bg-white border border-border text-gray-700 hover:bg-gray-50"
               }`}
           >
             Claimed ({claimedCount})
@@ -400,8 +400,8 @@ const ListingsMonitoringPage = () => {
             type="button"
             onClick={() => setActiveTab("spotlight")}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${activeTab === "spotlight"
-                ? "bg-[#ff4c05] text-white shadow-2xs"
-                : "bg-white border border-border text-gray-700 hover:bg-gray-50"
+              ? "bg-[#ff4c05] text-white shadow-2xs"
+              : "bg-white border border-border text-gray-700 hover:bg-gray-50"
               }`}
           >
             <Star className={`size-3.5 ${activeTab === "spotlight" ? "fill-white text-white" : "fill-amber-400 text-amber-400"}`} />

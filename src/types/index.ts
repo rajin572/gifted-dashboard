@@ -15,3 +15,5 @@ export * from "./settings.type";
 export * from "./telemetry.type";
 export * from "./userMonitoring.type";
 export * from "./listingsMonitoring.type";
+export * from "./storiesClaimsAudit.type";
+export * from "./liveStreamWatch.type";

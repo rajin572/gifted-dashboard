@@ -21,17 +21,17 @@ const DUMMY_USER_MONITORING_LIST: IUserMonitoringItem[] = [
   {
     _id: "usr-849201",
     name: "Sarah Jenkins",
-    email: "sarah.j@austin.edu",
+    email: "sarah.jenkins.atx@gmail.com",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
     isVerifiedDonor: true,
     role: "Community Leader",
     location: "South Congress",
-    giftsGiven: 48,
-    giftsReceived: 3,
+    giftsGiven: 19,
+    giftsReceived: 1,
     verificationStatus: "VERIFIED ID",
     accountStatus: "ACTIVE",
-    joinedDate: "November 2023",
-    recentActivity: "Vintage Herman Miller Office Chair • Completed • Picked up by David Kim • 2 hours ago",
+    joinedDate: "Jan 2024",
+    recentActivity: 'Posted MacBook Air 13" for student giveaway (2 hrs ago)',
     communityBadges: ["Super Giver", "Verified ID", "Community Champion", "Fast Responder"],
   },
   {
@@ -207,7 +207,7 @@ const UserManagementPage = () => {
             <div className="flex items-center gap-1.5 font-semibold text-gray-900 text-sm">
               <span className="truncate">{row.name}</span>
               {row.isVerifiedDonor && (
-                <CheckCircle2 className="size-4 text-blue-500 fill-blue-50 shrink-0" />
+                <CheckCircle2 className="size-5 text-primary-color fill-[#FF5C5C] shrink-0" />
               )}
             </div>
             <p className="text-xs text-gray-500 truncate">{row.email}</p>
@@ -222,7 +222,7 @@ const UserManagementPage = () => {
         <div>
           <span className="text-xs font-semibold text-gray-800">{row.role}</span>
           <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-            <MapPin className="size-3 text-gray-400 shrink-0" />
+            <MapPin className="size-3 text-[#FF5C5C] shrink-0" />
             <span>{row.location}</span>
           </div>
         </div>
@@ -246,8 +246,8 @@ const UserManagementPage = () => {
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${isVerified
-                ? "border-emerald-300 text-emerald-600 bg-emerald-50/70"
-                : "border-gray-200 text-gray-500 bg-gray-50"
+              ? "border-emerald-300 text-emerald-600 bg-emerald-50/70"
+              : "border-gray-200 text-gray-500 bg-gray-50"
               }`}
           >
             {row.verificationStatus}
@@ -264,10 +264,10 @@ const UserManagementPage = () => {
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${isReview
-                ? "border-amber-300 text-amber-600 bg-amber-50/70"
-                : isSuspended
-                  ? "border-rose-300 text-rose-600 bg-rose-50/70"
-                  : "border-emerald-300 text-emerald-600 bg-emerald-50/70"
+              ? "border-amber-300 text-amber-600 bg-amber-50/70"
+              : isSuspended
+                ? "border-rose-300 text-rose-600 bg-rose-50/70"
+                : "border-emerald-300 text-emerald-600 bg-emerald-50/70"
               }`}
           >
             {row.accountStatus}
@@ -287,7 +287,7 @@ const UserManagementPage = () => {
               setSelectedUser(row);
               setIsInspectOpen(true);
             }}
-            className="h-7 px-3 text-xs font-medium border-border text-gray-700 bg-white hover:bg-gray-50 rounded-lg shadow-2xs"
+            className="h-7 px-3 text-xs font-medium border-[#FED7AA] text-[#FF5C5C] bg-[#FFF7ED] hover:bg-gray-50 rounded-lg shadow-2xs"
           >
             Inspect
           </Button>

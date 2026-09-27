@@ -15,6 +15,7 @@ import {
 interface ReusableModalProps {
     trigger?: React.ReactNode;
     title: string;
+    accessibleTitle?: string;
     description?: string;
     children: React.ReactNode;
     footer?: React.ReactNode;
@@ -25,11 +26,13 @@ interface ReusableModalProps {
     closeButtonText?: string;
     showXCloseButton?: boolean;
     contentClassName?: string;
+    dialogClassName?: string;
 }
 
 function ReusableModal({
     trigger,
     title,
+    accessibleTitle,
     description,
     children,
     footer,
@@ -40,12 +43,13 @@ function ReusableModal({
     closeButtonText = "Cancel",
     showXCloseButton = true,
     contentClassName,
+    dialogClassName,
 }: ReusableModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
-            <DialogContent className={maxWidth} showCloseButton={showXCloseButton}>
+            <DialogContent className={cn(maxWidth, dialogClassName)} showCloseButton={showXCloseButton}>
                 {title ? (
                     <DialogHeader>
                         <DialogTitle className='text-lg sm:text-xl lg:text-2xl font-bold'>{title}</DialogTitle>
@@ -53,7 +57,7 @@ function ReusableModal({
                     </DialogHeader>
                 ) : (
                     <DialogHeader className="sr-only">
-                        <DialogTitle>Dialog</DialogTitle>
+                        <DialogTitle>{accessibleTitle ?? "Dialog"}</DialogTitle>
                     </DialogHeader>
                 )}
 

@@ -16,6 +16,13 @@
   --color-error: #e53935;
   --color-success: #11c186;
   --color-warning: #ffa500;
+  --color-coral-accent: #ff5c5c;
+  --color-warning-foreground: #b45309;
+  --color-warning-surface: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-danger-foreground: #b91c1c;
+  --color-danger-surface: #fef2f2;
+  --color-danger-border: #fca5a5;
 }
 
 html,

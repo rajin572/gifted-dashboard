@@ -21,10 +21,10 @@ const PageWraper: React.FC<PageWraperProps> = ({ className, preTitle, title, des
                             {preTitle}
                         </div>
                     )}
-                    <h1 className='text-2xl lg:text-[28px] font-semibold text-base-color leading-[1.2]'>{title}</h1>
+                    <h1 className='text-2xl lg:text-[28px] font-semibold text-base-color leading-[1.5]'>{title}</h1>
                     {
                         description &&
-                        <p className='mt-1 text-sm text-secondbase-color'>{description}</p>
+                        <p className='mt-3 text-sm text-base-color/50'>{description}</p>
                     }
                 </div>
                 {actions && <div className="shrink-0 flex items-center gap-2 flex-wrap">{actions}</div>}
