@@ -17,6 +17,9 @@ export const tagTypes = {
   listingsMonitoring: "ListingsMonitoring",
   storiesClaimsAudit: "StoriesClaimsAudit",
   liveStreamWatch: "LiveStreamWatch",
+  revenue: "Revenue",
+  subscription: "Subscription",
+  safetyReports: "SafetyReports",
 };
 
 export const tagTypesList = [
@@ -38,4 +41,7 @@ export const tagTypesList = [
   tagTypes.listingsMonitoring,
   tagTypes.storiesClaimsAudit,
   tagTypes.liveStreamWatch,
+  tagTypes.revenue,
+  tagTypes.subscription,
+  tagTypes.safetyReports,
 ];

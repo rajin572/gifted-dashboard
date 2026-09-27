@@ -17,3 +17,6 @@ export * from "./userMonitoring.type";
 export * from "./listingsMonitoring.type";
 export * from "./storiesClaimsAudit.type";
 export * from "./liveStreamWatch.type";
+export * from "./revenue.type";
+export * from "./subscription.type";
+export * from "./safetyReports.type";

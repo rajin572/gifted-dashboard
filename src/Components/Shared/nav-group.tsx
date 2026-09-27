@@ -25,6 +25,7 @@ export function NavGroup({ title, items }: NavGroupProps) {
       )}
       <SidebarMenu className="gap-1 mt-0.5">
         {items.map((item) => {
+          if (item.hideFromNav) return null;
           const key = `${item.title}-${item.url ?? ""}`;
           if (!item.items) {
             return <SidebarMenuLink key={key} item={item as NavLink} href={href} />;
