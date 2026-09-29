@@ -20,3 +20,4 @@ export * from "./liveStreamWatch.type";
 export * from "./revenue.type";
 export * from "./subscription.type";
 export * from "./safetyReports.type";
+export * from "./platformPolicies.type";

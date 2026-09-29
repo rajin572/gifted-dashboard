@@ -7,7 +7,7 @@ import RevenuePage from "@/pages/Revenue/RevenuePage";
 import SubscriptionPage from "@/pages/Subscription/SubscriptionPage";
 import TrustSafetyQueuePage from "@/pages/TrustSafetyQueue/TrustSafetyQueuePage";
 import PlatformPoliciesPage from "@/pages/PlatformPolicies/PlatformPoliciesPage";
-import ComplianceExportPage from "@/pages/ComplianceExport/ComplianceExportPage";
+// import ComplianceExportPage from "@/pages/ComplianceExport/ComplianceExportPage";
 
 import {
   BarChart2,
@@ -18,7 +18,7 @@ import {
   DollarSign,
   CreditCard,
   Shield,
-  Download,
+  // Download,
 } from "lucide-react";
 
 export const adminRoutes = [
@@ -89,27 +89,27 @@ export const adminRoutes = [
         icon: FileText,
         element: <PlatformPoliciesPage />,
       },
-      {
-        title: "Compliance Export",
-        url: "compliance-export",
-        icon: Download,
-        element: <ComplianceExportPage />,
-      },
-      // Backwards-compatibility aliases (hidden from sidebar)
-      {
-        title: "Trust & Safety Queue",
-        url: "trust-safety-queue",
-        icon: Shield,
-        hideFromNav: true,
-        element: <TrustSafetyQueuePage />,
-      },
-      {
-        title: "User Management",
-        url: "user-management",
-        icon: User,
-        hideFromNav: true,
-        element: <UserManagementPage />,
-      },
+      // {
+      //   title: "Compliance Export",
+      //   url: "compliance-export",
+      //   icon: Download,
+      //   element: <ComplianceExportPage />,
+      // },
+      // // Backwards-compatibility aliases (hidden from sidebar)
+      // {
+      //   title: "Trust & Safety Queue",
+      //   url: "trust-safety-queue",
+      //   icon: Shield,
+      //   hideFromNav: true,
+      //   element: <TrustSafetyQueuePage />,
+      // },
+      // {
+      //   title: "User Management",
+      //   url: "user-management",
+      //   icon: User,
+      //   hideFromNav: true,
+      //   element: <UserManagementPage />,
+      // },
     ],
   },
 ];
