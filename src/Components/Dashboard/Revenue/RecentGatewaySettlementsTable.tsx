@@ -1,55 +1,77 @@
-import { IGatewaySettlementItem } from "@/types";
+import { IGatewaySettlementItemData } from "@/types";
 import ReusableTable, { Column } from "@/Components/ui/CustomUi/ReuseableTable";
 import Tag from "@/Components/ui/CustomUi/ReuseTag";
 import { ArrowRight } from "lucide-react";
+import { getImageUrl } from "@/helpers/config/envConfig";
 
 interface RecentGatewaySettlementsTableProps {
-  data: IGatewaySettlementItem[];
+  data: IGatewaySettlementItemData[];
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  limit: number;
+  total: number;
 }
 
 export default function RecentGatewaySettlementsTable({
   data,
+  currentPage,
+  setCurrentPage,
+  limit,
+  total,
 }: RecentGatewaySettlementsTableProps) {
-  const columns: Column<IGatewaySettlementItem>[] = [
+  const columns: Column<IGatewaySettlementItemData>[] = [
     {
       header: "SUBSCRIBER",
       accessorKey: "subscriber",
-      render: (_, row) => (
-        <div className="flex items-center gap-3">
-          {row.subscriber.avatar ? (
-            <img
-              src={row.subscriber.avatar}
-              alt={row.subscriber.name}
-              className="w-9 h-9 rounded-full object-cover border border-gray-200"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-full bg-orange-100 text-[#ff4c05] font-bold text-xs flex items-center justify-center">
-              {row.subscriber.name.slice(0, 2).toUpperCase()}
+      render: (_, row) => {
+        const subName = row.subscriber.fullName;
+        const rawAvatar = row.subscriber.profileImage;
+        const avatarUrl = rawAvatar
+          ? rawAvatar.startsWith("http")
+            ? rawAvatar
+            : `${getImageUrl()}${rawAvatar}`
+          : undefined;
+
+        return (
+          <div className="flex items-center gap-3">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={subName}
+                className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-orange-100 text-[#ff4c05] font-bold text-xs flex items-center justify-center">
+                {subName.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <div className="font-semibold text-gray-900 text-xs sm:text-sm">
+                {subName}
+              </div>
+              <div className="text-[11px] text-gray-500">{row.subscriber.email}</div>
             </div>
-          )}
-          <div>
-            <div className="font-semibold text-gray-900 text-xs sm:text-sm">
-              {row.subscriber.name}
-            </div>
-            <div className="text-[11px] text-gray-500">{row.subscriber.email}</div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       header: "PLAN",
       accessorKey: "plan",
       render: (val) => {
-        if (val === "PLUS") {
-          return (
-            <span className="inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded border border-[#ff4c05]/40 text-[#ff4c05] bg-orange-50/50 uppercase">
-              PLUS
-            </span>
-          );
-        }
+        const isPlus = String(val).toUpperCase().includes("PLUS");
         return (
-          <span className="inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded border border-[#f59e0b]/40 text-[#b45309] bg-amber-50/50 uppercase">
-            PREMIUM
+          <span
+            className={`inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded border uppercase ${
+              isPlus
+                ? "border-[#ff4c05]/40 text-[#ff4c05] bg-orange-50/50"
+                : "border-[#f59e0b]/40 text-[#b45309] bg-amber-50/50"
+            }`}
+          >
+            {String(val)}
           </span>
         );
       },
@@ -57,16 +79,12 @@ export default function RecentGatewaySettlementsTable({
     {
       header: "AMOUNT",
       accessorKey: "amount",
-      render: (val) => (
-        <span className="font-bold text-gray-900 text-xs sm:text-sm">
-          ${Number(val).toFixed(2)}
-        </span>
-      ),
+      render: (val) => <span className="font-bold text-gray-900 text-xs sm:text-sm">{String(val)}</span>,
     },
     {
       header: "PROVIDER",
       accessorKey: "provider",
-      render: (val) => <span className="text-xs text-gray-700 font-medium">{val}</span>,
+      render: (val) => <span className="text-xs text-gray-700 font-medium">{String(val)}</span>,
     },
     {
       header: "STATUS",
@@ -88,7 +106,7 @@ export default function RecentGatewaySettlementsTable({
         }
         return (
           <Tag theme="error" className="text-[11px] font-medium px-2 py-0.5">
-            Failed
+            {String(val)}
           </Tag>
         );
       },
@@ -96,13 +114,13 @@ export default function RecentGatewaySettlementsTable({
     {
       header: "TIMESTAMP",
       accessorKey: "timestamp",
-      render: (val) => <span className="text-xs text-gray-500">{val}</span>,
+      render: (val) => <span className="text-xs text-gray-500">{String(val)}</span>,
     },
     {
       header: "INVOICE",
       accessorKey: "invoice",
       render: (val) => (
-        <span className="text-xs font-mono text-gray-600 font-medium">{val}</span>
+        <span className="text-xs font-mono text-gray-600 font-medium">{String(val)}</span>
       ),
     },
   ];
@@ -129,7 +147,11 @@ export default function RecentGatewaySettlementsTable({
         <ReusableTable
           data={data}
           columns={columns}
-          pagination={false}
+          pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          limit={limit}
+          total={total}
           scroll={false}
         />
       </div>

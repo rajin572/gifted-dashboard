@@ -1,17 +1,23 @@
-// import { Navigate } from "react-router-dom";
-// import useUserData from "../hooks/useUserData";
+import { Navigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import useUserData from "../hooks/useUserData";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   role: string;
 }
 
-function ProtectedRoute({ children }: ProtectedRouteProps) {
-  // const user = useUserData();
+function ProtectedRoute({ children, role }: ProtectedRouteProps) {
+  const token = Cookies.get("gifted-mainaccessToken");
+  const user = useUserData();
 
-  // if (!user || user.role !== role) {
-  //   return <Navigate to="/sign-in" replace />;
-  // }
+  if (!token) {
+    return <Navigate to="/sign-in" replace />;
+  }
+
+  if (user && user.role !== role) {
+    return <Navigate to="/sign-in" replace />;
+  }
 
   return <>{children}</>;
 }

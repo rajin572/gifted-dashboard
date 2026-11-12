@@ -1,10 +1,14 @@
-import { ITierContributionItem } from "@/types";
+import { ITierContributionData, ITierDetail } from "@/types";
 
 interface TierContributionCardProps {
-  tiers: ITierContributionItem[];
+  data: ITierContributionData;
 }
 
-export default function TierContributionCard({ tiers }: TierContributionCardProps) {
+export default function TierContributionCard({ data }: TierContributionCardProps) {
+  const tiers: { tier: ITierDetail; colorHex: string }[] = [];
+  if (data.tiers.plus) tiers.push({ tier: data.tiers.plus, colorHex: "#ff4c05" });
+  if (data.tiers.premium) tiers.push({ tier: data.tiers.premium, colorHex: "#f59e0b" });
+
   return (
     <div className="bg-white rounded-xl border border-border p-5 shadow-xs flex flex-col justify-between">
       <div>
@@ -13,49 +17,44 @@ export default function TierContributionCard({ tiers }: TierContributionCardProp
           Subscription revenue distributed by recipient tier
         </p>
 
-        {/* Tier Items */}
         <div className="mt-5 space-y-6">
-          {tiers.map((tier) => (
-            <div key={tier.tierName} className="space-y-2">
+          {tiers.map(({ tier, colorHex }) => (
+            <div key={tier.name} className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2 font-bold text-gray-900">
                   <span
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: tier.colorHex }}
+                    style={{ backgroundColor: colorHex }}
                   />
-                  <span>{tier.tierName}</span>
+                  <span>{tier.name}</span>
                 </div>
-                <span className="font-bold text-gray-900">{tier.activeCount} active</span>
+                <span className="font-bold text-gray-900">{tier.activeSubscribers} active</span>
               </div>
 
-              {/* Progress bar */}
               <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: `${tier.percentage}%`,
-                    backgroundColor: tier.colorHex,
+                    backgroundColor: colorHex,
                   }}
                 />
               </div>
 
-              {/* Tier breakdown details */}
               <div className="flex items-center justify-between text-[11px] text-gray-500 font-medium">
                 <span>
-                  ${tier.pricePerMonth.toFixed(2)}/mo • ${tier.monthlyTotal.toLocaleString()}/mo
+                  ${tier.monthlyPrice.toFixed(2)}/mo • ${tier.monthlyRevenue.toLocaleString()}/mo
                 </span>
-                <span>{tier.claimsPerMonth} claims/mo</span>
+                <span>{tier.claimsBadge}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Community Guarantee Callout */}
       <div className="mt-6 bg-[#fffbeb] border border-[#fef3c7] rounded-xl p-3.5 text-xs leading-relaxed text-[#92400e]">
         <span className="font-bold text-[#78350f]">Community Guarantee: </span>
-        15% of all subscription revenue is deposited into the Neighborhood Transit &
-        Delivery Fund to transport heavy gifts to recipients without vehicles.
+        {data.communityGuarantee.statement}
       </div>
     </div>
   );

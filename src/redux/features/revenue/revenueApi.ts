@@ -1,31 +1,12 @@
-import {
-  IGetRevenueOverviewResponse,
-  IGetGatewaySettlementsResponse,
-} from "@/types";
+import { IGetRevenueAnalyticsResponse, IRevenueAnalyticsArgs } from "@/types";
 import { baseApi } from "../../api/baseApi";
 import { tagTypes } from "../../tagTypes";
 
-interface GetSettlementsArgs {
-  page?: number;
-  limit?: number;
-  searchParams?: string;
-  provider?: string;
-  status?: string;
-}
-
 const revenueApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getRevenueOverview: builder.query<IGetRevenueOverviewResponse, { timeframe?: string }>({
+    getRevenueAnalytics: builder.query<IGetRevenueAnalyticsResponse, IRevenueAnalyticsArgs>({
       query: (params) => ({
-        url: "/admin/revenue/overview",
-        method: "GET",
-        params,
-      }),
-      providesTags: [tagTypes.revenue],
-    }),
-    getGatewaySettlements: builder.query<IGetGatewaySettlementsResponse, GetSettlementsArgs>({
-      query: (params) => ({
-        url: "/admin/revenue/settlements",
+        url: "/admin/revenue/analytics",
         method: "GET",
         params,
       }),
@@ -45,8 +26,8 @@ const revenueApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetRevenueOverviewQuery,
-  useGetGatewaySettlementsQuery,
+  useGetRevenueAnalyticsQuery,
   useExportRevenueStatementMutation,
 } = revenueApi;
+
 export default revenueApi;

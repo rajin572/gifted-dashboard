@@ -1,69 +1,60 @@
-"use client";
 import { useState } from "react";
 import OTPInput from "react-otp-input";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import AuthLayout from "@/Components/Shared/AuthLayout";
 import { Button } from "@/Components/ui/button";
-// import { useForgetOtpVerifyMutation, useResendForgetOTPMutation } from "@/redux/features/auth/authApi";
-// import tryCatchWrapper from "@/utils/tryCatchWrapper";
+import { useForgetOtpVerifyMutation, useResendForgetOTPMutation } from "@/redux/features/auth/authApi";
+import tryCatchWrapper from "@/utils/tryCatchWrapper";
 
 const OTPVerify = () => {
   const router = useNavigate();
   const [otp, setOtp] = useState("");
 
-  const forgottenEmail = JSON.parse(
-    Cookies.get("gifted-mainforgetEmail") || "null"
-  ) ?? "admin@gifted.com";
+  const forgottenEmail =
+    (Cookies.get("gifted-mainforgetEmail")
+      ? JSON.parse(Cookies.get("gifted-mainforgetEmail") as string)
+      : null) ?? "admin@gifted.com";
 
-  // const [otpMatch] = useForgetOtpVerifyMutation();
-  // const [resendOtp] = useResendForgetOTPMutation();
+  const [otpMatch] = useForgetOtpVerifyMutation();
+  const [resendOtp] = useResendForgetOTPMutation();
 
   const handleOTPSubmit = async () => {
-    if (otp.length === 4) {
-      // const res = await tryCatchWrapper(
-      //   otpMatch,
-      //   { body: { otp: otp } },
-      //   { toastLoadingMessage: "Verifying OTP..." }
-      // );
-      // if (res?.statusCode === 200) {
-      //   Cookies.remove("gifted-mainforgetToken");
-      //   Cookies.remove("gifted-mainforgetEmail");
-      //   Cookies.set(
-      //     "gifted-mainforgetOtpMatchToken",
-      //     res.data,
-      //     {
-      //       path: "/",
-      //       expires: 1,
-      //     }
-      //   );
-
-      setOtp("");
-      router("/update-password");
-      // }
+    if (otp.length === 6) {
+      const res = await tryCatchWrapper(
+        otpMatch,
+        { body: { otp } },
+        { toastLoadingMessage: "Verifying OTP..." }
+      );
+      if (res?.success && res?.data) {
+        Cookies.remove("gifted-mainforgetToken");
+        Cookies.remove("gifted-mainforgetEmail");
+        Cookies.set("gifted-mainforgetOtpMatchToken", res.data, {
+          path: "/",
+          expires: 1,
+        });
+        setOtp("");
+        router("/update-password");
+      }
     }
   };
 
   const handleResendOtp = async () => {
-    // await tryCatchWrapper(
-    //   resendOtp,
-    //   {
-    //     body: {
-    //       purpose: "forget-password",
-    //     },
-    //   },
-    //   { toastLoadingMessage: "Resending OTP..." }
-    // );
+    await tryCatchWrapper(
+      resendOtp,
+      undefined,
+      { toastLoadingMessage: "Resending OTP..." }
+    );
   };
 
   return (
     <AuthLayout
       subtitle="Reset your password"
       cardTitle="Enter OTP Code"
-      cardDescription="Enter the 4-digit code sent to your email"
+      cardDescription="Enter the 6-digit code sent to your email"
     >
       <div className="text-center">
-        <p className="text-sm text-gray-500">We sent a 4-digit code to:</p>
+        <p className="text-sm text-gray-500">We sent a 6-digit code to:</p>
         <p className="text-sm font-bold text-base-color mt-1">{forgottenEmail}</p>
       </div>
 
@@ -71,10 +62,10 @@ const OTPVerify = () => {
         <p className="text-sm font-medium text-base-color text-center mb-3">Enter OTP Code</p>
         <div className="flex justify-center">
           <OTPInput
-            inputStyle="!w-[50px] h-[50px] sm:!w-[56px] sm:!h-[56px] text-lg !bg-primary-color border !border-base-color/30 rounded-lg !mr-2.5 last:!mr-0 !text-base-color"
+            inputStyle="!w-[42px] h-[48px] sm:!w-[48px] sm:!h-[52px] text-lg !bg-primary-color border !border-base-color/30 rounded-lg !mr-2 last:!mr-0 !text-base-color text-center"
             value={otp}
             onChange={setOtp}
-            numInputs={4}
+            numInputs={6}
             renderInput={(props) => <input {...props} required />}
           />
         </div>
@@ -90,7 +81,13 @@ const OTPVerify = () => {
         </span>
       </p>
 
-      <Button onClick={handleOTPSubmit} variant="secondary" className="w-full mt-5" type="button">
+      <Button
+        onClick={handleOTPSubmit}
+        variant="secondary"
+        className="w-full mt-5"
+        type="button"
+        disabled={otp.length !== 6}
+      >
         Verify OTP
       </Button>
 
@@ -103,4 +100,5 @@ const OTPVerify = () => {
     </AuthLayout>
   );
 };
+
 export default OTPVerify;

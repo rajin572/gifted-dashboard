@@ -1,45 +1,45 @@
-import { ITelemetryStats } from "@/types";
+import { ITelemetryKpis } from "@/types";
 import { BookOpen, Users, ClipboardList, Radio, ArrowUpRight } from "lucide-react";
 
 interface TelemetryStatCardsProps {
-  stats: ITelemetryStats;
+  kpis: ITelemetryKpis;
 }
 
-const TelemetryStatCards = ({ stats }: TelemetryStatCardsProps) => {
+const TelemetryStatCards = ({ kpis }: TelemetryStatCardsProps) => {
   const cards = [
     {
       title: "Total Neighbor Gifts",
-      value: stats.totalNeighborGifts,
-      trend: stats.neighborGiftsTrend,
+      value: kpis.neighborGifts.total,
+      trend: kpis.neighborGifts.weekGrowth,
       trendColor: "text-[#ff4c05]",
-      subtext: `${stats.availableGiftsCount} Available • ${stats.claimedGiftsCount} Claimed`,
+      subtext: kpis.neighborGifts.breakdownText,
       icon: BookOpen,
       iconBg: "bg-orange-50 text-[#ff4c05]",
     },
     {
       title: "Community Members",
-      value: stats.communityMembers,
-      trend: stats.membersVerifiedRate,
+      value: kpis.communityMembers.total,
+      trend: kpis.communityMembers.verifiedPercentage,
       trendColor: "text-[#3b82f6]",
-      subtext: `${stats.activeInAustinNode} Active in Austin Node`,
+      subtext: kpis.communityMembers.footerText,
       icon: Users,
       iconBg: "bg-blue-50 text-[#3b82f6]",
     },
     {
       title: "Applicant Needs Vetted",
-      value: stats.applicantNeedsVetted,
-      trend: stats.needsVettedRate,
+      value: kpis.applicantNeedsVetted.total,
+      trend: kpis.applicantNeedsVetted.freeRuleRate,
       trendColor: "text-[#ff4c05]",
-      subtext: `Average ${stats.averageApplicantsPerListing.toFixed(1)} applicants per listing`,
+      subtext: kpis.applicantNeedsVetted.footerText,
       icon: ClipboardList,
       iconBg: "bg-orange-50 text-[#ff4c05]",
     },
     {
       title: "Live Broadcasts On Air",
-      value: stats.liveBroadcastsOnAir,
-      trend: `${stats.watchingCount} Watching`,
+      value: kpis.liveBroadcasts.total,
+      trend: kpis.liveBroadcasts.watchingText,
       trendColor: "text-[#ff4c05]",
-      subtext: stats.liveBroadcastsSubtext,
+      subtext: kpis.liveBroadcasts.footerText,
       icon: Radio,
       iconBg: "bg-orange-50 text-[#ff4c05]",
     },

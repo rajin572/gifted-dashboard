@@ -1,14 +1,13 @@
 import { DollarSign, TrendingUp, Users, CreditCard } from "lucide-react";
-import { IRevenueOverviewStats } from "@/types";
+import { IRevenueKpis } from "@/types";
 
 interface RevenueStatCardsProps {
-  stats: IRevenueOverviewStats;
+  kpis: IRevenueKpis;
 }
 
-export default function RevenueStatCards({ stats }: RevenueStatCardsProps) {
+export default function RevenueStatCards({ kpis }: RevenueStatCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Monthly Recurring (MRR) */}
       <div className="bg-white rounded-xl border border-border p-4.5 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -20,15 +19,14 @@ export default function RevenueStatCards({ stats }: RevenueStatCardsProps) {
         </div>
         <div className="mt-2">
           <div className="text-2xl font-bold text-gray-900 tracking-tight">
-            ${stats.mrr.toLocaleString()}
+            {kpis.mrr.formatted}
           </div>
           <div className="mt-1 flex items-center text-xs font-medium text-emerald-600">
-            <span>↗ +{stats.mrrChangePercentage}% from last month</span>
+            <span>{kpis.mrr.growth}</span>
           </div>
         </div>
       </div>
 
-      {/* 2. Annual Run Rate (ARR) */}
       <div className="bg-white rounded-xl border border-border p-4.5 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -40,15 +38,14 @@ export default function RevenueStatCards({ stats }: RevenueStatCardsProps) {
         </div>
         <div className="mt-2">
           <div className="text-2xl font-bold text-gray-900 tracking-tight">
-            ${stats.arr.toLocaleString()}
+            {kpis.arr.formatted}
           </div>
           <div className="mt-1 flex items-center text-xs font-medium text-emerald-600">
-            <span>↗ Projected run rate</span>
+            <span>↗ {kpis.arr.subText}</span>
           </div>
         </div>
       </div>
 
-      {/* 3. Paid Recipients */}
       <div className="bg-white rounded-xl border border-border p-4.5 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -60,15 +57,14 @@ export default function RevenueStatCards({ stats }: RevenueStatCardsProps) {
         </div>
         <div className="mt-2">
           <div className="text-2xl font-bold text-gray-900 tracking-tight">
-            {stats.paidRecipients}
+            {kpis.paidRecipients.count}
           </div>
           <div className="mt-1 flex items-center text-xs font-medium text-gray-500">
-            <span>{stats.communitySharePercentage}% of total community</span>
+            <span>{kpis.paidRecipients.percentageOfCommunity}</span>
           </div>
         </div>
       </div>
 
-      {/* 4. Avg Revenue / User (ARPU) */}
       <div className="bg-white rounded-xl border border-border p-4.5 shadow-xs flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -80,10 +76,10 @@ export default function RevenueStatCards({ stats }: RevenueStatCardsProps) {
         </div>
         <div className="mt-2">
           <div className="text-2xl font-bold text-gray-900 tracking-tight">
-            ${stats.arpu.toFixed(2)}
+            {kpis.arpu.formatted}
           </div>
           <div className="mt-1 flex items-center text-xs font-medium text-amber-700">
-            <span>Blended Plus & Premium</span>
+            <span>{kpis.arpu.subText}</span>
           </div>
         </div>
       </div>

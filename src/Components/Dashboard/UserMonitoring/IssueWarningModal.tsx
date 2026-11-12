@@ -10,7 +10,7 @@ import {
 } from "@/Components/ui/CustomUi/ReuseForm/Form";
 import { SelectItem } from "@/Components/ui/select";
 import { Button } from "@/Components/ui/button";
-import { IUserMonitoringItem } from "@/types";
+import { IUserSupervisionItem } from "@/types";
 // import { useIssueWarningMutation } from "@/redux/features/userMonitoring/userMonitoringApi";
 // import tryCatchWrapper from "@/utils/tryCatchWrapper";
 import { useEffect } from "react";
@@ -26,7 +26,7 @@ type WarningFormValues = z.infer<typeof warningSchema>;
 interface IssueWarningModalProps {
   open: boolean;
   onClose: () => void;
-  user: IUserMonitoringItem | null;
+  user: IUserSupervisionItem | null;
   onSuccess?: () => void;
 }
 
@@ -77,7 +77,7 @@ const IssueWarningModal = ({
     <ReuseableModal
       open={open}
       onOpenChange={(isOpen) => !isOpen && onClose()}
-      title={`Issue Community Warning: ${user?.name ?? ""}`}
+      title={`Issue Community Warning: ${user?.fullName ?? ""}`}
       description="Record an official supervisory warning on this member's reputation record."
       maxWidth="sm:max-w-lg"
     >

@@ -9,18 +9,19 @@ import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
 import { adminRoutes } from "@/Routes/admin.route";
 import { AllImages } from "@/assets/AllImages";
-import { IJwtPayload } from "@/types";
+import useUserData from "@/hooks/useUserData";
 
 export function AppSidebar() {
-  const userData = {
-    userId: "1234567890",
-    fullName: "John Doe",
-    email: "RcOwT@example.com",
-    role: "Admin",
+  const user = useUserData();
+  const userData = user ?? {
+    userId: "",
+    fullName: "Admin",
+    email: "admin@gifted.com",
+    role: "admin",
     profileImage: AllImages.profile,
-    phone: "1234567890",
-  } as IJwtPayload | null;
-  // const userData: IJwtPayload | null = useUserData();
+    phone: "",
+  };
+
   return (
     <Sidebar collapsible={"icon"} variant={"sidebar"}>
       <SidebarHeader className="overflow-hidden">

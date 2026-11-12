@@ -5,120 +5,24 @@ import MrrTrajectoryCadenceCard from "@/Components/Dashboard/Revenue/MrrTrajecto
 import TierContributionCard from "@/Components/Dashboard/Revenue/TierContributionCard";
 import RecentGatewaySettlementsTable from "@/Components/Dashboard/Revenue/RecentGatewaySettlementsTable";
 import ExportStatementModal from "@/Components/Dashboard/Revenue/ExportStatementModal";
+import SpinLoader from "@/Components/ui/CustomUi/SpinLoader";
 import { Download } from "lucide-react";
 import { Button } from "@/Components/ui/button";
-import {
-  IRevenueOverviewStats,
-  IMrrCadenceData,
-  ITierContributionItem,
-  IGatewaySettlementItem,
-} from "@/types";
-// import {
-//   useGetRevenueOverviewQuery,
-//   useGetGatewaySettlementsQuery,
-// } from "@/redux/features/revenue/revenueApi";
-
-const DUMMY_STATS: IRevenueOverviewStats = {
-  mrr: 7994,
-  mrrChangePercentage: 14.2,
-  arr: 95928,
-  paidRecipients: 614,
-  communitySharePercentage: 17.8,
-  arpu: 13.02,
-};
-
-const DUMMY_CADENCE: IMrrCadenceData = {
-  inspectingPeriod: "Week 3 (Sep 08 - 14)",
-  periodMrr: 2210,
-  periodGrowth: 11.6,
-  subscribers: {
-    plus: 147,
-    premium: 53,
-  },
-  transitFund15: 332,
-  bars: [
-    { weekLabel: "Aug 25–31", plusAmount: 1100, premiumAmount: 600, totalAmount: 1700, growth: 8.2 },
-    { weekLabel: "Sep 01–07", plusAmount: 1300, premiumAmount: 700, totalAmount: 2000, growth: 13.8 },
-    { weekLabel: "Sep 08–14", plusAmount: 1450, premiumAmount: 760, totalAmount: 2210, growth: 11.6, isSelected: true },
-    { weekLabel: "Sep 15–21", plusAmount: 1650, premiumAmount: 850, totalAmount: 2500, growth: 12.7 },
-    { weekLabel: "Sep 22–28", plusAmount: 1850, premiumAmount: 940, totalAmount: 2790, growth: 12.0 },
-  ],
-  cadenceAvg: 2242,
-  highest: 2790,
-  conversionRate: 17.8,
-  billingChurn: 1.8,
-};
-
-const DUMMY_TIERS: ITierContributionItem[] = [
-  {
-    tierName: "Gifted Plus",
-    badge: "PLUS",
-    colorHex: "#ff4c05",
-    activeCount: 428,
-    pricePerMonth: 9.99,
-    monthlyTotal: 4276,
-    claimsPerMonth: 10,
-    percentage: 65,
-  },
-  {
-    tierName: "Gifted Premium",
-    badge: "PREMIUM",
-    colorHex: "#f59e0b",
-    activeCount: 186,
-    pricePerMonth: 19.99,
-    monthlyTotal: 3718,
-    claimsPerMonth: 25,
-    percentage: 35,
-  },
-];
-
-const DUMMY_SETTLEMENTS: IGatewaySettlementItem[] = [
-  {
-    _id: "settle_1",
-    subscriber: {
-      name: "Maya Rodriguez",
-      email: "maya.rodriguez@utexas.edu",
-    },
-    plan: "PLUS",
-    amount: 9.99,
-    provider: "Stripe",
-    status: "Successful",
-    timestamp: "2026-09-16 14:22",
-    invoice: "INV-2026-0891",
-  },
-  {
-    _id: "settle_2",
-    subscriber: {
-      name: "David Chen",
-      email: "david.chen.vet@gmail.com",
-    },
-    plan: "PREMIUM",
-    amount: 19.99,
-    provider: "Apple IAP",
-    status: "Successful",
-    timestamp: "2026-09-15 09:15",
-    invoice: "INV-2026-0884",
-  },
-];
+import { useGetRevenueAnalyticsQuery } from "@/redux/features/revenue/revenueApi";
 
 export default function RevenuePage() {
   const [timeframe, setTimeframe] = useState<"30D" | "90D" | "12M">("30D");
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10;
 
-  // TODO: wire to useGetRevenueOverviewQuery once the endpoint exists.
-  // const { data: overviewData } = useGetRevenueOverviewQuery({ timeframe });
-  // const stats = overviewData?.data?.stats ?? DUMMY_STATS;
-  // const cadence = overviewData?.data?.cadence ?? DUMMY_CADENCE;
-  // const tiers = overviewData?.data?.tiers ?? DUMMY_TIERS;
+  const { data, isFetching } = useGetRevenueAnalyticsQuery(
+    { timeframe, page: currentPage, limit },
+    { refetchOnMountOrArgChange: true }
+  );
 
-  // TODO: wire to useGetGatewaySettlementsQuery once the endpoint exists.
-  // const { data: settlementsData } = useGetGatewaySettlementsQuery({ page: 1, limit: 10 });
-  // const settlements = settlementsData?.data?.data ?? DUMMY_SETTLEMENTS;
-
-  const stats = DUMMY_STATS;
-  const cadence = DUMMY_CADENCE;
-  const tiers = DUMMY_TIERS;
-  const settlements = DUMMY_SETTLEMENTS;
+  const analytics = data?.data;
+  const settlementsTotal = analytics?.recentGatewaySettlements.meta.total ?? 0;
 
   return (
     <PageWraper
@@ -136,13 +40,15 @@ export default function RevenuePage() {
       description="Monitor real-time application earnings, recurring subscription metrics, gateway settlements, and the 15% community delivery fund allocation."
       actions={
         <div className="flex items-center gap-3">
-          {/* Timeframe pill toggle */}
           <div className="inline-flex items-center bg-gray-100/90 rounded-lg p-1 border border-gray-200/60 text-xs font-semibold">
             {(["30D", "90D", "12M"] as const).map((tf) => (
               <button
                 key={tf}
                 type="button"
-                onClick={() => setTimeframe(tf)}
+                onClick={() => {
+                  setTimeframe(tf);
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                   timeframe === tf
                     ? "bg-[#ff4c05] text-white shadow-xs"
@@ -154,7 +60,6 @@ export default function RevenuePage() {
             ))}
           </div>
 
-          {/* Export Statement button */}
           <Button
             type="button"
             variant="outline"
@@ -167,25 +72,40 @@ export default function RevenuePage() {
         </div>
       }
     >
-      <div className="space-y-6">
-        {/* 1. Stat Cards Row */}
-        <RevenueStatCards stats={stats} />
-
-        {/* 2. Trajectory + Tier Contribution Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <MrrTrajectoryCadenceCard data={cadence} />
-          </div>
-          <div className="lg:col-span-1">
-            <TierContributionCard tiers={tiers} />
-          </div>
+      {isFetching ? (
+        <div className="py-24 flex justify-center items-center">
+          <SpinLoader />
         </div>
+      ) : !analytics ? (
+        <div className="py-10 text-center text-secondbase-color text-sm">
+          No data found.
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <RevenueStatCards kpis={analytics.kpis} />
 
-        {/* 3. Recent Gateway Settlements Table */}
-        <RecentGatewaySettlementsTable data={settlements} />
-      </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <MrrTrajectoryCadenceCard
+                data={analytics.cadenceTrajectory}
+                tiers={analytics.tierContribution.tiers}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <TierContributionCard data={analytics.tierContribution} />
+            </div>
+          </div>
 
-      {/* Export Statement Modal */}
+          <RecentGatewaySettlementsTable
+            data={analytics.recentGatewaySettlements.data}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            limit={limit}
+            total={settlementsTotal}
+          />
+        </div>
+      )}
+
       <ExportStatementModal
         open={isExportOpen}
         onClose={() => setIsExportOpen(false)}

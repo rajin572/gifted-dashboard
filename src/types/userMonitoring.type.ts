@@ -1,40 +1,120 @@
 import { IMeta } from "./common.type";
 
-export type UserVerificationStatus = "VERIFIED ID" | "UNVERIFIED";
-export type UserAccountStatus = "ACTIVE" | "UNDER REVIEW" | "SUSPENDED" | "BANNED";
+export type UserAccountStatus = "ACTIVE" | "UNDER REVIEW" | "SUSPENDED" | "BANNED" | string;
 
-export interface IUserMonitoringItem {
+export interface IUserSupervisionItem {
   _id: string;
-  name: string;
+  fullName: string;
   email: string;
-  avatar: string;
-  isVerifiedDonor: boolean;
+  profileImage?: string;
+  phone?: string;
   role: string;
-  location: string;
-  giftsGiven: number;
-  giftsReceived: number;
-  verificationStatus: UserVerificationStatus;
+  communityRole: string;
+  neighborhoodLabel: string;
+  giftGiven: number;
+  giftReceived: number;
+  formattedGiveReceive: string;
+  totalStreamsHosted: number;
+  totalStoriesClaimed: number;
+  communityTrustScore: number;
   accountStatus: UserAccountStatus;
-  joinedDate?: string;
-  recentActivity?: string;
-  communityBadges?: string[];
+  isBlocked: boolean;
+  isSuspended: boolean;
+  suspendedUntil?: string | null;
+  hasCompletedProfile: boolean;
+  lastActiveAt?: string | null;
+  createdAt: string;
 }
 
-export interface IGetUserMonitoringResponse {
+export interface IUserSupervisionSummary {
+  totalSupervisedMembers: number;
+  totalActive: number;
+  totalUnderReview: number;
+  totalSuspended: number;
+  totalBlocked: number;
+}
+
+export interface IGetUserSupervisionResponse {
   success: boolean;
   statusCode: number;
   message: string;
   data: {
-    data: IUserMonitoringItem[];
+    summary: IUserSupervisionSummary;
     meta: IMeta;
+    data: IUserSupervisionItem[];
   };
 }
 
-export interface IGetUserMonitoringDetailResponse {
+export interface IUserInspectUser {
+  _id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  profileImage?: string;
+  role: string;
+  neighborhoodLabel?: string;
+  communityTrustScore?: number;
+  giftGiven?: number;
+  giftReceived?: number;
+  totalStreamsHosted?: number;
+  totalStoriesClaimed?: number;
+  isBlocked?: boolean;
+  isSuspended?: boolean;
+  suspendedUntil?: string | null;
+  hasCompletedProfile?: boolean;
+  lastActiveAt?: string | null;
+  createdAt?: string;
+}
+
+export interface IUserInspectStats {
+  totalGifts: number;
+  totalClaims: number;
+  totalStreams: number;
+}
+
+export interface IUserInspectGift {
+  _id: string;
+  title: string;
+  images: string[];
+  coverImageIndex: number;
+  condition: string;
+  category: string;
+  claimState: string;
+  sportLite?: boolean;
+  createdAt: string;
+}
+
+export interface IUserInspectAuditLog {
+  _id: string;
+  action: string;
+  performedBy: {
+    _id: string;
+    email: string;
+    role: string;
+    fullName: string;
+  } | null;
+  performedByRole: string;
+  metadata?: {
+    action?: string;
+    reason?: string;
+  };
+  createdAt: string;
+}
+
+export interface IUserInspectionData {
+  user: IUserInspectUser;
+  stats: IUserInspectStats;
+  recentGifts: IUserInspectGift[];
+  recentClaims: unknown[];
+  recentStreams: unknown[];
+  auditLogs: IUserInspectAuditLog[];
+}
+
+export interface IGetUserInspectionResponse {
   success: boolean;
   statusCode: number;
   message: string;
-  data: IUserMonitoringItem;
+  data: IUserInspectionData;
 }
 
 export interface IIssueWarningPayload {

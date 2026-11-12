@@ -6,30 +6,13 @@ const telemetryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getTelemetryOverview: builder.query<IGetTelemetryOverviewResponse, void>({
       query: () => ({
-        url: "/admin/telemetry/overview",
+        url: "/admin/dashboard/telemetry",
         method: "GET",
       }),
-      providesTags: [tagTypes.telemetry],
-    }),
-    exportTelemetryAudit: builder.mutation<unknown, void>({
-      query: () => ({
-        url: "/admin/telemetry/export-audit",
-        method: "POST",
-      }),
-    }),
-    downloadTelemetryReport: builder.mutation<unknown, void>({
-      query: () => ({
-        url: "/admin/telemetry/download-report",
-        method: "GET",
-      }),
+      providesTags: [tagTypes.telemetry, tagTypes.dashboard],
     }),
   }),
 });
 
-export const {
-  useGetTelemetryOverviewQuery,
-  useExportTelemetryAuditMutation,
-  useDownloadTelemetryReportMutation,
-} = telemetryApi;
-
+export const { useGetTelemetryOverviewQuery } = telemetryApi;
 export default telemetryApi;

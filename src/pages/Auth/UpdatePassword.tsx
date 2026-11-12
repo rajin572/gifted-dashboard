@@ -1,11 +1,10 @@
-"use client";
 import AuthLayout from "@/Components/Shared/AuthLayout";
 import { Button } from "@/Components/ui/button";
 import { FormPassword } from "@/Components/ui/CustomUi/ReuseForm/Form";
 import { FieldError, FieldGroup } from "@/Components/ui/field";
 import useUserData from "@/hooks/useUserData";
-// import { useResetPasswordMutation } from "@/redux/features/auth/authApi";
-// import tryCatchWrapper from "@/utils/tryCatchWrapper";
+import { useResetPasswordMutation } from "@/redux/features/auth/authApi";
+import tryCatchWrapper from "@/utils/tryCatchWrapper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
@@ -15,100 +14,102 @@ import { MdPassword } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import z from "zod";
 
-
-const changePassSchema = z.object({
+const changePassSchema = z
+  .object({
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6),
-});
+    confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const UpdatePassword = () => {
-    const form = useForm({
-        resolver: zodResolver(changePassSchema),
-        defaultValues: {
-            password: "",
-            confirmPassword: "",
-        },
-    });
+  const form = useForm<z.infer<typeof changePassSchema>>({
+    resolver: zodResolver(changePassSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
+  const { watch } = form;
+  const password = watch("password");
+  const confirmPassword = watch("confirmPassword");
+  const confirmPasswordError =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
-    const { watch } = form;
-    const password = watch("password");
-    const confirmPassword = watch("confirmPassword");
+  const router = useNavigate();
+  const userExist = useUserData();
+  const [resetPassword] = useResetPasswordMutation();
 
-    // Show error if passwords don't match
-    const confirmPasswordError = password !== confirmPassword;
+  useEffect(() => {
+    if (userExist?.role === "admin") {
+      router("/admin/overview", { replace: true });
+    }
+  }, [router, userExist]);
 
-    const router = useNavigate();
-    const userExist = useUserData();
-    // const [resetPassword] = useResetPasswordMutation();
-
-    useEffect(() => {
-        if (userExist?.role === "admin") {
-            router("/", { replace: true });
-        }
-    }, [router, userExist]);
-
-    const onFinish = async (_data: z.infer<typeof changePassSchema>) => {
-        // const value = {
-        //     newPassword: _data.password,
-        //     confirmPassword: _data.confirmPassword,
-        // };
-
-        // const res = await tryCatchWrapper(
-        //     resetPassword,
-        //     { body: value },
-        //     { toastLoadingMessage: "Resetting password..." }
-        // );
-        // if (res?.statusCode === 200) {
-        //     form.reset();
-        //     Cookies.remove("gifted-mainforgetOtpMatchToken");
-        //     router("/sign-in");
-        // }
-        form.reset();
-        Cookies.remove("gifted-mainforgetOtpMatchToken");
-        router("/sign-in");
+  const onFinish = async (_data: z.infer<typeof changePassSchema>) => {
+    const value = {
+      newPassword: _data.password,
+      confirmPassword: _data.confirmPassword,
     };
-    return (
-        <AuthLayout
-            subtitle="Reset your password"
-            cardTitle="Reset password"
-            cardDescription="Choose a strong password to protect your account."
-        >
-            <form onSubmit={form.handleSubmit(onFinish)}>
-                <FieldGroup>
-                    <FormPassword
-                        prefix={<MdPassword size={18} />}
-                        control={form.control}
-                        name="password"
-                        label="New Password"
-                        placeholder="Enter your password"
-                        inputClassName="bg-primary-color! border-base-color/30!"
-                    />
-                    <FormPassword
-                        prefix={<MdPassword size={18} />}
-                        control={form.control}
-                        name="confirmPassword"
-                        label="Confirm New Password"
-                        placeholder="Enter your password"
-                        inputClassName="bg-primary-color! border-base-color/30!"
-                    />
-                    {confirmPasswordError && (
-                        <FieldError errors={[{ message: "Passwords don't match" }]} />
-                    )}
-                    <Button variant="secondary" className="w-full" type="submit">
-                        Reset Password
-                    </Button>
-                </FieldGroup>
-            </form>
 
-            <Link
-                to="/sign-in"
-                className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-base-color transition-colors mt-6"
-            >
-                <FaArrowLeftLong className="size-3.5" />
-                Back to Login
-            </Link>
-        </AuthLayout>
+    const res = await tryCatchWrapper(
+      resetPassword,
+      { body: value },
+      { toastLoadingMessage: "Resetting password..." }
     );
+
+    if (res?.success) {
+      form.reset();
+      Cookies.remove("gifted-mainforgetOtpMatchToken");
+      router("/sign-in");
+    }
+  };
+
+  return (
+    <AuthLayout
+      subtitle="Reset your password"
+      cardTitle="Reset password"
+      cardDescription="Choose a strong password to protect your account."
+    >
+      <form onSubmit={form.handleSubmit(onFinish)}>
+        <FieldGroup>
+          <FormPassword
+            prefix={<MdPassword size={18} />}
+            control={form.control}
+            name="password"
+            label="New Password"
+            placeholder="Enter your password"
+            inputClassName="bg-primary-color! border-base-color/30!"
+          />
+          <FormPassword
+            prefix={<MdPassword size={18} />}
+            control={form.control}
+            name="confirmPassword"
+            label="Confirm New Password"
+            placeholder="Enter your password"
+            inputClassName="bg-primary-color! border-base-color/30!"
+          />
+          {confirmPasswordError && (
+            <FieldError errors={[{ message: "Passwords don't match" }]} />
+          )}
+          <Button variant="secondary" className="w-full mt-4" type="submit">
+            Reset Password
+          </Button>
+        </FieldGroup>
+      </form>
+
+      <Link
+        to="/sign-in"
+        className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-base-color transition-colors mt-6"
+      >
+        <FaArrowLeftLong className="size-3.5" />
+        Back to Login
+      </Link>
+    </AuthLayout>
+  );
 };
+
 export default UpdatePassword;

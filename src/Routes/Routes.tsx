@@ -15,24 +15,23 @@ import UpdatePassword from "@/pages/Auth/UpdatePassword";
 import NotFound from "@/Components/ui/CustomUi/NotFound/NotFound";
 // import useUserData from "@/hooks/useUserData";
 import ProtectedRoute from "./ProtectedRoute";
+import useUserData from "@/hooks/useUserData";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function AuthRedirect() {
-  // const user = useUserData();
+  const user = useUserData();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // if (user && user.role === "admin") {
-    //   navigate(`/${user.role}/overview`, {
-    //     replace: true,
-    //   });
-    // } else {
-    //   navigate("/sign-in", { replace: true });
-    // }
-    navigate("/admin/overview", { replace: true });
-  }, [navigate]);
+    if (user && user.role === "admin") {
+      navigate("/admin/overview", {
+        replace: true,
+      });
+    } else {
+      navigate("/sign-in", { replace: true });
+    }
+  }, [navigate, user]);
 
-  // Optionally display a loading indicator
   return <Loading />;
 }
 

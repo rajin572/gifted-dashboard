@@ -30,8 +30,15 @@ export function NavUser({ user }: { user: IJwtPayload | null }) {
     .toUpperCase()
     .slice(0, 2) ?? "?";
 
+  const avatarSrc = user?.profileImage
+    ? user.profileImage.startsWith("http")
+      ? user.profileImage
+      : `${serverUrl}${user.profileImage}`
+    : undefined;
+
   const handleLogout = () => {
     Cookies.remove("gifted-mainaccessToken");
+    Cookies.remove("gifted-mainrefreshToken");
     window.location.reload();
   };
   return (
@@ -45,7 +52,7 @@ export function NavUser({ user }: { user: IJwtPayload | null }) {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={serverUrl + user?.profileImage} alt={user?.fullName} />
+                  <AvatarImage src={avatarSrc} alt={user?.fullName} />
                   <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-start text-sm leading-tight">
@@ -64,7 +71,7 @@ export function NavUser({ user }: { user: IJwtPayload | null }) {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={serverUrl + user?.profileImage} alt={user?.fullName} />
+                    <AvatarImage src={avatarSrc} alt={user?.fullName} />
                     <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-start text-sm leading-tight">

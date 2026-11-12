@@ -1,11 +1,9 @@
-import { FadeLoader } from "react-spinners";
+import SpinLoader from "./SpinLoader";
 
 const Loading = () => {
   return (
-    <div className=" isolate aspect-video h-screen bg-primary-color/40 backdrop-blur w-full flex justify-center items-center">
-      <FadeLoader
-        color="#2C1C43"
-      />
+    <div className="isolate h-screen w-full bg-primary-color/40 backdrop-blur flex justify-center items-center">
+      <SpinLoader />
     </div>
   );
 };

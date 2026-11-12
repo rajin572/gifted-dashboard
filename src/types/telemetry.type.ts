@@ -1,49 +1,90 @@
-export interface ITelemetryStats {
-  totalNeighborGifts: number;
-  neighborGiftsTrend: string;
-  availableGiftsCount: number;
-  claimedGiftsCount: number;
-  communityMembers: number;
-  membersVerifiedRate: string;
-  activeInAustinNode: number;
-  applicantNeedsVetted: number;
-  needsVettedRate: string;
-  averageApplicantsPerListing: number;
-  liveBroadcastsOnAir: number;
-  watchingCount: number;
-  liveBroadcastsSubtext: string;
+export interface INeighborGiftsKpi {
+  total: number;
+  weekGrowth: string;
+  availableCount: number;
+  claimedCount: number;
+  breakdownText: string;
 }
 
-export type ActivityItemStatus = "AVAILABLE" | "CLAIMED";
+export interface ICommunityMembersKpi {
+  total: number;
+  verifiedPercentage: string;
+  activeCount: number;
+  footerText: string;
+}
 
-export interface IActivityStreamItem {
-  _id: string;
+export interface IApplicantNeedsVettedKpi {
+  total: number;
+  freeRuleRate: string;
+  averagePerListing: number;
+  footerText: string;
+}
+
+export interface ILiveBroadcastsKpi {
+  total: number;
+  totalWatching: number;
+  watchingText: string;
+  footerText: string;
+}
+
+export interface ITelemetryKpis {
+  neighborGifts: INeighborGiftsKpi;
+  communityMembers: ICommunityMembersKpi;
+  applicantNeedsVetted: IApplicantNeedsVettedKpi;
+  liveBroadcasts: ILiveBroadcastsKpi;
+}
+
+export interface ITelemetryHost {
+  id: string;
+  fullName: string;
+  email: string;
+  neighborhoodLabel: string;
+}
+
+export type ActivityClaimState = "AVAILABLE" | "CLAIMED" | string;
+
+export interface ITelemetryLiveActivityItem {
+  id: string;
   title: string;
-  donorName: string;
-  donorLocation: string;
-  status: ActivityItemStatus;
-  applicantStoriesCount: number;
-  image: string;
-  createdAt?: string;
+  coverImage: string;
+  claimState: ActivityClaimState;
+  host: ITelemetryHost;
+  donorSubtitle: string;
+  storyClaimCount: number;
+  storyBadgeText: string;
+  pickUpPreference?: string;
+  timeRemaining?: string;
+  createdAt: string;
 }
 
-export interface ITrustSafetyMetric {
-  overallScore: number;
-  freeRuleCompliance: number;
-  identityVerifiedDonors: number;
-  noShowDisputeResolution: number;
+export interface ITelemetryTrustSafetyIndex {
+  overallScore: string | number;
+  overallPercentage: number;
+  freeRuleCompliance: string | number;
+  identityVerifiedDonors: string | number;
+  disputeResolution: string | number;
   pendingFlagsCount: number;
+  pendingFlagsText?: string;
+  subtitle?: string;
 }
 
-export interface ITelemetryOverviewData {
-  stats: ITelemetryStats;
-  activityStream: IActivityStreamItem[];
-  trustSafetyIndex: ITrustSafetyMetric;
+export interface ITelemetryData {
+  kpis: ITelemetryKpis;
+  liveActivityStream: ITelemetryLiveActivityItem[];
+  trustSafetyIndex: ITelemetryTrustSafetyIndex;
+  totalUsers: number;
+  newUsersToday: number;
+  activeLiveStreams: number;
+  totalGiftsGiven: number;
+  totalClaimsSubmitted: number;
+  revenueThisMonthInCents: number;
+  openModerationFlags: number;
+  recentActivity: unknown[];
 }
 
 export interface IGetTelemetryOverviewResponse {
   success: boolean;
   statusCode: number;
   message: string;
-  data: ITelemetryOverviewData;
+  data: ITelemetryData;
 }
